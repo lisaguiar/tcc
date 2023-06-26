@@ -63,12 +63,12 @@ const router = createBrowserRouter ([
       },
       {
         path:'/kanban', element: <Kanban/>
+      },
+      {
+        path:'/logastro', element: <Logastro/>
       }
     ]
-  },
-  {
-    path:'/logastro', element: <Logastro/>
-  },
+  }
 ])
 
 function App() {

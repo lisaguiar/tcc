@@ -25,11 +25,11 @@ export const updateUserInfo = (req, res) => {
 }
 
 export const updatePassword = (req, res) => {
-    const token = req.cookies.token;
-    if(!token) return res.status(401).json("Usuário não autenticado!");
+    const token = req.cookies.token
+    if(!token) return res.status(401).json("Usuário não autenticado!")
 
     jwt.verify(token, "jwtSecurity", (err, user) => {
-        if(err) return res.status(403).json("Token inválido!");
+        if(err) return res.status(403).json("Token inválido!")
 
         const q = "SELECT * FROM usu_usuarios WHERE usu_id = ?";
         const anoId = req.params.id;
@@ -38,7 +38,7 @@ export const updatePassword = (req, res) => {
             if (err) {
                 return res.json(err)
             } 
-        
+         
             const senhaCorreta = bcrypt.compareSync(req.body.senha, data[0].usu_senha)
 
             if (!senhaCorreta) {

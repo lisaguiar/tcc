@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-
 :root{
   --color-default1:#22a07a;
   --color-default:#010922;
@@ -11,7 +9,7 @@
   --color-light:#e0e0e0;
 }
 
-body{
+body {
   min-height: calc(100vh - var(--header-height));
 }
 

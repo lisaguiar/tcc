@@ -9,17 +9,18 @@ export const AuthContextProvider = ({children})=> {
 
     const login = async (inputs) => {
         const res = await axios.post("/api/login", inputs)
-        await setCurrentUser(res.data)
+        const userData = res.data;
         
-        if (currentUser.use_lastDesktop !== null) {
-            const use_id = currentUser.use_id
-            const des_id = currentUser.use_lastDesktop
+        if (userData.use_lastDesktop !== null) {
+            const use_id = userData.use_id
+            const des_id = userData.use_lastDesktop
             const res = await axios.get(`/api/desktop/${use_id}/${des_id}`)
-            console.log(res.data)
             const uda_id = res.data[0].uda_id
             const per_id = res.data[0].per_id
-            const newUserData = { ...currentUser, uda_id: uda_id, per_id: per_id}
-            await setCurrentUser(() => newUserData)
+            const newUserData = { ...userData, uda_id: uda_id, per_id: per_id }
+            await setCurrentUser(newUserData)
+        } else {
+            await setCurrentUser(userData)
         }
     }
 
@@ -33,7 +34,6 @@ export const AuthContextProvider = ({children})=> {
         const des_id = inputs
 
         const res = await axios.get(`/api/desktop/${use_id}/${des_id}`)
-        console.log(res.data)
         const uda_id = res.data[0].uda_id
         const per_id = res.data[0].per_id
         const newUserData = { ...currentUser, use_lastDesktop: des_id, uda_id: uda_id, per_id: per_id}

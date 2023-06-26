@@ -1,6 +1,8 @@
 import React from 'react';
-import { FaBookmark, FaRegBell, FaBox, FaCubes, FaUserFriends, FaTh, FaSearch, FaSmile, FaRegCalendarAlt} from "react-icons/fa";
-import {BiLogOut} from "react-icons/bi";
+import { FaBookmark, FaRegBell, FaBox, FaCubes, FaUserFriends, FaTh, FaSearch, FaSmile, FaRegCalendarAlt } from "react-icons/fa";
+import { BiLogOut } from "react-icons/bi";
+import { RiInboxLine, RiNotification3Line, RiNotification3Fill, RiBookmarkLine, RiStarLine, RiStarFill, RiHomeLine, RiSearchLine } from "react-icons/ri"
+import { MdOutlineGroup } from "react-icons/md"
 import '../styles/Sidebar.css'
 
 const Sidebar = () => {
@@ -13,7 +15,7 @@ const Sidebar = () => {
         <li>
           <a href="#">
             <div className="icon">
-            <FaBox/>
+              <RiInboxLine color="white" />
             </div>
 
             <span className="link_name">Área de trabalho</span>
@@ -23,9 +25,9 @@ const Sidebar = () => {
 
         <li>
           <a href="#">
-          <div className="icon">
-          <FaRegBell />
-          </div>
+            <div className="icon">
+              <RiNotification3Line color="white" />
+            </div>
 
             <span className="link_name">Notificação</span>
           </a>
@@ -34,9 +36,9 @@ const Sidebar = () => {
 
         <li>
           <a href="#">
-          <div className="icon">
-          <FaUserFriends />
-          </div>
+            <div className="icon">
+              <MdOutlineGroup />
+            </div>
 
             <span className="link_name">Compartilhado</span>
           </a>
@@ -44,9 +46,9 @@ const Sidebar = () => {
         </li>
         <li>
           <a href="#">
-          <div className="icon">
-          <FaRegCalendarAlt />
-          </div>
+            <div className="icon">
+              <FaRegCalendarAlt />
+            </div>
 
             <span className="link_name">Calendario</span>
           </a>
@@ -54,9 +56,9 @@ const Sidebar = () => {
         </li>
         <li>
           <a href="#">
-          <div className="icon">
-          <FaBookmark />
-          </div>
+            <div className="icon">
+              <RiBookmarkLine />
+            </div>
 
             <span className="link_name">Favoritos</span>
           </a>
@@ -64,19 +66,19 @@ const Sidebar = () => {
         </li>
         <li>
           <a href="#">
-          <div className="icon">
-          <FaSmile />
-          </div>
+            <div className="icon">
+              <RiSearchLine />
+            </div>
 
-            <span className="link_name">Ajuda</span>
+            <span className="link_name">Pesquisar</span>
           </a>
-          <span className="tooltip">Ajuda</span>
+          <span className="tooltip">Pesquisar</span>
         </li>
         <li>
           <a href="#">
-          <div className="icon">
-          <FaCubes />
-          </div>
+            <div className="icon">
+              <FaCubes />
+            </div>
 
             <span className="link_name">Gadgets</span>
           </a>
@@ -88,4 +90,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default Sidebar

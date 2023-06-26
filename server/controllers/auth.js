@@ -21,13 +21,13 @@ export const register = (req, res) => {
             req.body.use_email,
             hash,
             req.body.use_name,
-            req.body.use_date,
+            "kkk",
             state
         ]
 
         db.query(q, [values], (err, data) => {
             if (err) {
-                return res.json(err)
+                return res.status(500).json("Não foi possível realizar o cadastro!")
             }
             return res.status(200).json("Usuário cadastrado com sucesso!")
         })
@@ -39,7 +39,7 @@ export const login = (req, res) => {
 
     db.query(q, [req.body.email_login], (err, data) => {
         if (err) {
-            return res.json(err)
+            return res.json("Houve um erro ao realizar o cadastro. Tente novamente mais tarde!")
         } 
         if (data.length === 0) {
             return res.status(400).json("Email ou senha incorretos!")

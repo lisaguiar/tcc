@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;800&display=swap');
 
 :root {
-  --header-height: 90px;
+  --header-height: 70px;
   --menu-width: 300px;
 
   --font-light: 300;
@@ -85,4 +85,13 @@ button:hover {
 ::-webkit-scrollbar-thumb {
   background-color: var(--grey);
   border-radius: 2px;
+}
+
+.form_error_message {
+  color: var(--light-purple);
+  margin: 5px 0 !important;
+  text-shadow: none !important;
+  max-width: 350px;
+  text-align: center;
+  word-wrap: break-word;
 }

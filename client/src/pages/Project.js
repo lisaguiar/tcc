@@ -46,6 +46,7 @@ const Project = () => {
   const use_id = currentUser?.use_id
   const last_id = currentUser?.use_lastDesktop
 
+
   const location = useLocation()
   const des_id = location.pathname.split("/")[2]
   const pro_id = location.pathname.split("/")[4]
@@ -55,25 +56,18 @@ const Project = () => {
   console.log(projects)
   console.log(project)
   console.log("fra:" + fra_id)
+  console.log("ai" + currentUser)
 
   async function renderKanban(frame) {
     const res = await axios.get(`/api/kanban/table/${fra_id}`)
     setKanbanTable(res.data)
     return (
       <div className='kanban'>
-        <DragDropContext onDragEnd={handleDragDrop}>
+        <DragDropContext /*onDragEnd={handleDragDrop}*/>
             <Droppable droppableId="root" type="group">
                 {(provided) => (
                     <div className='flex' {...provided.droppableProps} ref={provided.innerRef}>
-                        {columns.map((column, index) => (
-                            <Draggable draggableId={column.id} key={column.id} index={index}>
-                                {(provided) => (
-                                    <div {...provided.dragHandleProps} {...provided.draggableProps} ref={provided.innerRef}>
-                                        <ColumnList {...column} />
-                                    </div>
-                                )}
-                            </Draggable>
-                        ))}
+                     
                         {provided.placeholder}
                     </div>
                 )}

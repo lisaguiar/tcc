@@ -12,13 +12,13 @@ const HorizontalNavbar = () => {
 
     const use_id = currentUser?.use_id
 
-    const [profDropIsOpen, setProfDropIsOpen] = useState(false);
+    const [profDropIsOpen, setProfDropIsOpen] = useState(false)
     const navigate = useNavigate()
 
     function LinkPage (props) {
         return (
-            <li className="header__content_nav_li">
-                {(props.path === props.match) ? (<a className="header__content_nav_path">{props.text}</a>) : (<Link to={props.match}>{props.text}</Link>)}
+            <li className="header__nav_li">
+                {(props.path === props.match) ? (<a className="header__nav_path">{props.text}</a>) : (<Link to={props.match}>{props.text}</Link>)}
             </li>
         )
     }
@@ -40,12 +40,12 @@ const HorizontalNavbar = () => {
 
     return (
         <div className="header">
-            <div className="header__content">
+            <div className="header-cont">
                 <Link to='/'>
                     <img src={logo} alt="logotipo do sistema"/>
                 </Link>
             </div>
-            <div className="header__content_nav">
+            <div className="header__nav">
                 <ul>
                     {currentUser ? (
                         <>
@@ -62,7 +62,7 @@ const HorizontalNavbar = () => {
                             <LinkPage text="Sobre Nós" path={pathname} match="/sobre"/>
                             <LinkPage text="Funcionalidades" path={pathname} match="/funcionalidades"/>
                             <li>
-                            <button className="header__content_nav_button"><Link to="/logastro" className="header__content_login">Acessar minha conta →</Link></button>
+                            <button className="header__nav_button"><Link to="/logastro" className="header__login">Acessar minha conta →</Link></button>
                             </li>
                         </>
                     )}

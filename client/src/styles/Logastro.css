@@ -7,9 +7,11 @@
   width: 15vw;
 }
 
-body:has(#container) {
+.body {
   display: flex;
   background-image: url("../images/image6.png");
+  background-size: cover;
+  background-position: center;
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -82,14 +84,11 @@ body:has(#container) {
 .content label {
   font-size: 14px;
   user-select: none;
-  padding-left: 5px;
 }
 
 .container button {
   position: relative;
   border-radius: 20px;
-  border: 1px solid #4bb6b7;
-  background-color: #4bb6b7;
   color: #fff;
   font-size: 15px;
   font-weight: 700;
@@ -100,21 +99,13 @@ body:has(#container) {
   transition: 0.3s ease-in-out;
 }
 
-.container button:hover {
-  letter-spacing: 3px;
-}
-
-.container button:active {
-  transform: scale(0.95);
-}
-
 .container button:focus {
   outline: none;
 }
 
 .container button.ghost {
   background-color: rgba(225, 225, 225, 0.2);
-  border: 2px solid #fff;
+  border: 2px solid var(--white);
   color: #fff;
 }
 
@@ -314,5 +305,5 @@ body:has(#container) {
 }
 
 .social-container a:hover {
-  border: 1px solid #4bb6b7;
+  border: 1px solid var(--white);
 }
