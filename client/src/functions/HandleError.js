@@ -12,7 +12,6 @@ function ErrorDisplay({ message }) {
 
   useEffect(() => {
     setIsVisible(true)
-    console.log(message)
   }, [message])
 
   return (

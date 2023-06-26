@@ -272,6 +272,7 @@ body {
 
 .projeto-edit {
   color: var(--light-purple);
+  cursor: pointer;
 }
 .projeto-edit:hover {
   text-decoration: underline;
@@ -468,11 +469,13 @@ body {
     background-color: #fff;
     padding: 40px;
     border-radius: 5px;
+    min-width: 500px;
 }
 
 .lista-topo {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .lista-datoss {
@@ -486,7 +489,7 @@ body {
 }
 
 .lista-datoss input {
-  background-color: #eee;
+  background-color: #e8f0fe;
   border-radius: 10px;
   border: none;
   padding: 12px 15px;
@@ -500,7 +503,7 @@ body {
   outline: none;
 }
 .lista-datoss1 {
-  padding: 5% 0;
+  padding-top: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -549,14 +552,14 @@ body {
 
 .prof_dropdown {
   position: absolute;
-
-  right: 25px;
-  width: 165px;
-  transform: translateY(35%);
-  border: 1px solid rgb(156, 156, 156);
-  border-radius: 6px;
-  background-color: rgb(255, 255, 255);
+  border: 1px solid var(--dark-grey-border);
+  right: 35px;
+  width: 30%;
+  transform: translateY(55%);
+  border-radius: 5px;
+  background-color: var(--white);
   padding: 0.5rem;
+  z-index: 9000;
 
   transition: all 300ms;
 }
@@ -573,7 +576,9 @@ body {
   padding: 0.5rem;
   font-size: 1.2rem;
   margin-top: 5px;
+  cursor: pointer;
 }
+
 .prof_item:hover {
   background-color: var(--light-purple-li);
 }

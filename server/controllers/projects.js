@@ -51,3 +51,24 @@ export const getProject = (req, res) => {
         return res.status(200).json(data)
     })
 }
+
+export const postProject = (req, res) => {
+    const q = "INSERT INTO pro_projects (pro_title, pro_description, pro_state, pro_createdAt, des_id, uda_id) VALUES (?)"
+
+    const values = [
+        req.body.pro_title,
+        req.body.pro_description,
+        state,
+        req.body.pro_createdAt,
+        req.params.des_id,
+        req.params.uda_id
+    ]
+
+    console.log(values)
+    db.query(q, [values], (err, data) => {
+        if (err) {
+            return res.status(500).json(err)
+        }
+        return res.status(200).json("Projeto criado com sucesso!")
+    })
+}

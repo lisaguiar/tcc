@@ -91,7 +91,7 @@ button:hover {
   color: var(--light-purple);
   margin: 5px 0 !important;
   text-shadow: none !important;
-  max-width: 350px;
+  max-width: 400px;
   text-align: center;
   word-wrap: break-word;
 }

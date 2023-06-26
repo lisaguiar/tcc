@@ -38,6 +38,7 @@ export const AuthContextProvider = ({children})=> {
         const per_id = res.data[0].per_id
         const newUserData = { ...currentUser, use_lastDesktop: des_id, uda_id: uda_id, per_id: per_id}
         await setCurrentUser(() => newUserData)
+        //window.location.reload()
     }
 
     const checkUserPermission = async (inputs) => {

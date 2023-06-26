@@ -5,6 +5,7 @@ import { AuthContext } from '../contexts/authContext'
 import { CiLogout } from 'react-icons/ci'
 import logo from "../images/logo_nome.png"
 import '../styles/HorizontalNavbar.css'
+import { AiOutlineLogout, AiOutlineUser } from 'react-icons/ai'
 
 const HorizontalNavbar = () => {
     const { pathname } = useLocation()
@@ -26,13 +27,13 @@ const HorizontalNavbar = () => {
     function ProfDropdown () {
         return (
           <div className="prof__dropdown">
-            <div className="prof__item" onClick={() => {setProfDropIsOpen(!profDropIsOpen); navigate('/logado')}}>
-              <MdPerson2/>
-              Perfil
+            <div className="prof__item" onClick={() => {setProfDropIsOpen(!profDropIsOpen); navigate('/user')}}>
+              <AiOutlineUser/>
+              <p>Perfil</p>
             </div>
             <div className="prof__item" onClick={logout}>
-              <MdLogout/>
-              Sair
+              <AiOutlineLogout/>
+              <p>Sair</p>
             </div>
           </div>
         )
@@ -51,7 +52,7 @@ const HorizontalNavbar = () => {
                         <>
                             <li>
                                 <div className="profile__icon" onClick={() => setProfDropIsOpen(!profDropIsOpen)}>
-                                <MdPerson2 color="white"/>
+                                    <AiOutlineUser color="white"/>
                                 </div>
 
                                 {profDropIsOpen && <ProfDropdown />}

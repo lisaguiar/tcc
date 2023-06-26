@@ -8,18 +8,23 @@ import { useNavigate } from 'react-router-dom'
 import { Logado } from '../components/IsLogged'
 import { useHandleDatabaseRequest } from '../functions/IsOnline'
 import ErrorDisplay from '../functions/HandleError'
-import { AiOutlineClose } from 'react-icons/ai'
+import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit, AiOutlineUsergroupAdd } from 'react-icons/ai'
 import moment from 'moment'
 import { useForm } from 'react-hook-form'
-import { RiHome2Line, RiHome6Line, RiHomeLine, RiMore2Fill } from 'react-icons/ri'
+import { RiEdit2Fill, RiHome2Line, RiHome6Line, RiHomeLine, RiMore2Fill } from 'react-icons/ri'
 
 const Workspace = () => {
   const [showModal, setShowModal] = useState(false)
+  const [showModalProject, setShowModalProject] = useState(false)
 
   const {register, formState: {errors, isValid}, handleSubmit} = useForm({
     mode: "all"
   })
 
+  const { currentUser, handleDesktop } = useContext(AuthContext)
+  const use_id = currentUser?.use_id
+  const last_id = currentUser?.use_lastDesktop
+  const uda_id = currentUser?.uda_id
   const createdAt = moment(Date.now()).format("YYYY-MM-DD HH:mm:ss")
 
   const [inputDesktop, setInputDesktop] = useState({
@@ -28,16 +33,36 @@ const Workspace = () => {
     des_createdAt: createdAt
   })
 
+  const [inputProject, setInputProject] = useState({
+    pro_title: "",
+    pro_description: "",
+    pro_createdAt: createdAt,
+    uda_id: currentUser?.uda_id,
+    des_id: currentUser?.use_lastDesktop
+  })
+
   const handleOpenModal = () => {
     setShowModal(true)
+  }
+
+  const handleOpenModalProject = () => {
+    setShowModalProject(true)
   }
 
   const handleCloseModal = () => {
     setShowModal(false)
   }
 
+  const handleCloseModalProject = () => {
+    setShowModalProject(false)
+  }
+
   const handleChangeDesktop = e => {
     setInputDesktop(prev => ({...prev, [e.target.name]: e.target.value}))
+  }
+
+  const handleChangeProject = e => {
+    setInputProject(prev => ({...prev, [e.target.name]: e.target.value}))
   }
 
   const navigate = useNavigate()
@@ -51,30 +76,31 @@ const Workspace = () => {
   const [projects, setProjects] = useState([])
   const [err, setErr] = useState("")
 
-  const { currentUser, handleDesktop } = useContext(AuthContext)
-  const use_id = currentUser?.use_id
-  const last_id = currentUser?.use_lastDesktop
-
   const submitChangeDesktop = async (values) => {
     try {
       await handleDesktop(values)
-      window.location.reload()
     } catch (err) {
-      console.log(err)
+      setErr("Houve um problema ao acessar a área de trabalho selecionada. Tente novamente mais tarde.")
     }
   }
 
   const SubmitDesktop = async () => {
     try {
       const res = await axios.post(`/api/desktops/post/${use_id}`, inputDesktop)
-      
-      console.log(res.data)
       await submitChangeDesktop(res.data)
     } catch (err) {
-      console.log(err)
       setErr(err.response.data)
     }
     setShowModal(false)
+  }
+
+  const SubmitProject = async () => {
+    try {
+      await axios.post(`/api/projects/post/${uda_id}/${last_id}`, inputProject)
+    } catch (err) {
+      setErr(err.response.data)
+    }
+    setShowModalProject(false)
   }
 
   const { handleOnlineStatus, connectionErr } = useHandleDatabaseRequest()
@@ -146,13 +172,21 @@ const Workspace = () => {
   function Dropdown () {
     return (
       <div className="prof_dropdown">
-        <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); navigate('/logado')}}>
-          
-          Perfil
+        <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); navigate(`/desktop/${last_id}`)}}>
+          <AiOutlineEdit/>
+          <p>Editar Área de Trabalho</p>
         </div>
-        <div className="prof_item" >
-          
-          Sair
+        <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); navigate(`/desktop/${last_id}`)}}>
+          <AiOutlineDelete/>
+          <p>Excluir Área de Trabalho</p>
+        </div>
+        <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); setShowModalProject(true)}}>
+          <AiOutlineDelete/>
+          <p>Criar projeto</p>
+        </div>
+        <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); navigate(`/desktop/${last_id}`)}}>
+          <AiOutlineUsergroupAdd/>
+          <p>Gerenciar Membros</p>
         </div>
       </div>
     )
@@ -286,7 +320,7 @@ const Workspace = () => {
                       <h4>Nenhum projeto cadastrado</h4>
                       <p>Crie um projeto para poder gerar seus quadros</p>
                     </div>
-                    <button className="add_desktop" onClick={() => handleOpenModal()}>Adicionar projeto +</button>
+                    <button className="add_desktop" onClick={() => handleOpenModalProject()}>Adicionar projeto +</button>
                   </div>
                 )}
               </div>
@@ -339,6 +373,48 @@ const Workspace = () => {
               <ul className="lista-datoss1">
                 <p onClick={handleCloseModal}>Cancelar</p>
                 <button type="submit" disabled={!isValid}>Adicionar área de trabalho</button>
+              </ul>
+            </form>
+
+          </div>
+        </div>
+      )}
+
+      {showModalProject && (
+        <div className="modal">
+          <div className="perfil-usuario-bioo">
+            <div className="lista-topo">
+              <h3>Adicionar projeto</h3>
+              <span className="mdi mdi-close close" onClick={() => handleCloseModalProject()}><AiOutlineClose/></span>
+            </div>
+
+            <form className="lista-datoss" onSubmit={handleSubmit(SubmitProject)}>
+              <label>Nome do projeto</label>
+              <input
+                type="text"
+                placeholder="Insira o título do projeto"
+                className={errors?.pro_title && 'input-error'}
+                {...register('pro_title', {required: true, minLength: 4})}
+                onChange={handleChangeProject}
+              />
+              {errors?.pro_title?.type === 'required' && <p className="form_error_message">Insira um nome para o projeto!</p>}
+              {errors?.pro_title?.type === 'minLength' && <p className="form_error_message">O nome do projeto precisa conter no mínimo 4 caracteres</p>}
+
+              <div className='space'></div>
+              <label>Descrição do projeto</label>
+              <input
+                type="text"
+                placeholder="Insira a descrição do projeto"
+                className={errors?.pro_description && 'input-error'}
+                {...register('pro_description', {required: true, minLength: 10})}
+                onChange={handleChangeProject}
+              />
+              {errors?.pro_description?.type === 'required' && <p className="form_error_message">Insira uma descrição para o projeto!</p>}
+              {errors?.pro_description?.type === 'minLength' && <p className="form_error_message">A descrição do projeto precisa conter no mínimo 10 caracteres</p>}
+
+              <ul className="lista-datoss1">
+                <p onClick={handleCloseModalProject}>Cancelar</p>
+                <button type="submit" disabled={!isValid}>Adicionar projeto</button>
               </ul>
             </form>
 

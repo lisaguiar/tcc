@@ -59,11 +59,11 @@
 
 .prof__dropdown {
     position: absolute;
-    top: 58px;
+    top: 70px;
     width: 165px;
-    transform: translateX(-70%);
-    border: 1px solid rgb(156, 156, 156);
-    border-radius: 6px;
+    transform: translateX(-75%);
+    border: 1px solid var(--dark-grey-border);
+    border-radius: 5px;
     background-color: rgb(255, 255, 255);
     padding: 0.5rem;
 
@@ -93,7 +93,7 @@
     width: 100%;
     border-radius: 50%;
     background-color: var(--light-purple);
-    padding: 10px;
+    padding: 5px;
 
     display: flex;
     align-items: center;
