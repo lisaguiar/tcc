@@ -38,8 +38,8 @@ const Desktop = () => {
     setShowModal(false)
   }
 
-  const handleOpenModalUpdate = () => {
-    handlePatch(lastDesktop[0]?.des_title, lastDesktop[0]?.des_description)
+  const handleOpenModalUpdate = async () => {
+    await handlePatch(lastDesktop[0]?.des_title, lastDesktop[0]?.des_description)
     setShowModalUpdate(true)
   }
 
@@ -390,7 +390,7 @@ const Desktop = () => {
                 type="text"
                 placeholder="Insira o título da área de trabalho"
                 value={inputUpdateDesktop.des_titleUpdated}
-                className={errors?.pro_title && 'input-error'}
+                className={errors?.pro_titleUpdated && 'input-error'}
                 {...register('des_titleUpdated', {required: true, minLength: 4})}
                 onChange={handleChangeUpdateDesktop}
               />

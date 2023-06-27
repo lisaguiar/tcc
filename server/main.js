@@ -44,6 +44,7 @@ import userRoutes from './routes/user.js'
 import desktopRoutes from './routes/desktop.js'
 import projectRoutes from './routes/projects.js'
 import frameRoutes from './routes/frames.js'
+import kanbanRoutes from './routes/kanban.js'
 
 app.use('/api', authRoutes)
 app.use('/api/note', noteRoutes)
@@ -51,6 +52,7 @@ app.use('/api/user', userRoutes)
 app.use('/api/desktops', desktopRoutes)
 app.use('/api/projects', projectRoutes)
 app.use('/api/frames', frameRoutes)
+app.use('/api/kanban', kanbanRoutes)
 
 server.listen(8001, () => {
     console.log('Conectado na porta 8001')

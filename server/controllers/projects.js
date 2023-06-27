@@ -65,6 +65,6 @@ export const postProject = (req, res) => {
         }
         req.io.emit('projectCreated', { projectId: data.insertId })
 
-        return res.status(200).json("Projeto criado com sucesso!")
+        return res.status(200).json(data.insertId)
     })
 }

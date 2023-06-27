@@ -107,6 +107,7 @@ body {
   padding: 10px 15px;
   background-color: var(--light-purple);
   height: 80%;
+  max-width: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -279,6 +280,8 @@ body {
 }
 
 .topo {
+  display: flex;
+  flex-direction: column;
   position: absolute;
   top: 0;
   left: calc(var(--menu-width) + var(--spacing-navbar)); /* Largura do submenu */
@@ -435,7 +438,6 @@ body {
   .projeto-null {
     display: flex;
     width: 100%;
-    height: calc(100vh - var(--header-height));
     justify-content: center;
     text-align: center;
     margin: 0 auto;
@@ -543,12 +545,26 @@ body {
   flex-direction: row;
   padding: 1% 2% 0 2%;
 }
-.quadro-item {
-  border: 1px solid black;
-  padding: 10px 20px;
-  background-color: var(--white-);
-}
 
+.quadro-item, .quadro-item-add {
+  border: 2px solid var(--dark-grey-border);
+  border-top: none;
+  border-bottom: none;
+  padding: 10px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+  min-width: 15%;
+
+  cursor: pointer;
+}
+.quadro-item-add {
+  border: none;
+  min-width: 20px;
+
+}
 
 .prof_dropdown {
   position: absolute;
@@ -581,4 +597,20 @@ body {
 
 .prof_item:hover {
   background-color: var(--light-purple-li);
+}
+
+.add-frame {
+  position: fixed;
+  right: 35px;
+  margin-top: 9px;
+  color: var(--light-purple);
+}
+.add-frame p {
+  font-size: 17px;
+}
+
+.delete-table {
+  margin-left: 50%;
+  color: var(--white);
+  cursor: pointer;
 }

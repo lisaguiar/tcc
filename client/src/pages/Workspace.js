@@ -100,7 +100,7 @@ const Workspace = () => {
       await axios.post(`/api/projects/post/${uda_id}/${last_id}`, inputProject)
     } catch (err) {
       console.log(err)
-      //setErr(err.response.data)
+      setErr(err.data)
     }
     setShowModalProject(false)
   }
@@ -138,7 +138,7 @@ const Workspace = () => {
 
   const getProjects = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/projects/${last_id}/0`)
+      const res = await axios.get(`/api/projects/all/${last_id}/0`)
       setProjects(res.data)
       if (res.data.length === 0 || !res.data.length) {
         setCountProject(false)
