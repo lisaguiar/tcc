@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import '../styles/Workspace.css'
 import { GrConfigure } from 'react-icons/gr'
 import axios from '../api/axios'
@@ -7,6 +7,8 @@ import house from '../images/house.png'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Logado } from '../components/IsLogged'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
+import { useHandleDatabaseRequest } from '../functions/IsOnline'
+import { io } from 'socket.io-client'
 
 const Project = () => {
   const [showModal, setShowModal] = useState(false)
@@ -30,15 +32,19 @@ const Project = () => {
 
   const navigate = useNavigate()
 
-  const [projects, setProjects] = useState([])
   const [valid, setValid] = useState(true)
   const [query, setQuery] = useState("")
   const [count, setCount] = useState(true)
+
   const [lastDesktop, setLastDesktop] = useState([])
   const [project, setProject] = useState([])
-  const [frames, setFrames] = useState([])
+  const [projects, setProjects] = useState([])
+  const [countProject, setCountProject] = useState(false)
+
   const [countFrames, setCountFrames] = useState(false)
+  const [frames, setFrames] = useState([])
   const [frame, setFrame] = useState([])
+
   const [kanbanTable, setKanbanTable] = useState([])
   const [kanbanCards, setKanbanCards] = useState([])
 
@@ -46,20 +52,20 @@ const Project = () => {
   const use_id = currentUser?.use_id
   const last_id = currentUser?.use_lastDesktop
 
+  const [err, setErr] = useState("")
+  const [frameId, setFrameId] = useState("")
+
 
   const location = useLocation()
   const des_id = location.pathname.split("/")[2]
   const pro_id = location.pathname.split("/")[4]
-  const fra_id = location.pathname.split("/")[6]
 
-  console.log(lastDesktop)
-  console.log(projects)
-  console.log(project)
-  console.log("fra:" + fra_id)
-  console.log("ai" + currentUser)
+  const handleFrameId = () => {
+    setFrameId(location.pathname.split("/")[6])
+  }
 
   async function renderKanban(frame) {
-    const res = await axios.get(`/api/kanban/table/${fra_id}`)
+    const res = await axios.get(`/api/kanban/table/${frameId}`)
     setKanbanTable(res.data)
     return (
       <div className='kanban'>
@@ -119,6 +125,103 @@ const Project = () => {
     )
   }
 
+  const { handleOnlineStatus, connectionErr } = useHandleDatabaseRequest()
+  let isOnline = true
+
+  useEffect(() => {
+    const socket = io('http://localhost:8001')
+  
+    socket.on('connect', () => {
+      console.log('Conectado ao servidor do Socket.io')
+    })
+
+    socket.on('desktopDeleted', () => {
+        console.log('Área deletada!')
+    })
+
+    socket.on('frameCreated', () => {
+
+    })
+
+    socket.on('frameUpdated', () => {
+      
+    })
+
+    socket.on('frameDeleted', () => {
+      
+    })
+
+    socket.on('projectCreated', () => {
+      
+    })
+
+    socket.on('projectUpdated', () => {
+      
+    })
+
+    socket.on('projectDeleted')
+  
+    socket.on('disconnect', () => {
+      console.log('Desconectado do servidor do Socket.io')
+    })
+  
+    return () => {
+      socket.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      isOnline = await handleOnlineStatus()
+    }
+    fetchData()
+  })
+
+  const getProjects = useCallback(async () => {
+    try {
+      const res = await axios.get(`/api/projects/${des_id}/${pro_id}?q=${query}`)
+      setProjects(res.data)
+      if (res.data.length === 0 || !res.data.length) {
+        setCount(false)
+      } else {
+        setCount(true)
+        console.log(res.data)
+      }
+    } catch (err) {
+      setErr(err.data)
+    }
+  }, [des_id, query])
+
+  const getProject = useCallback(async () => {
+    try {
+      const res = await axios.get(`/api/projects/${pro_id}/${last_id}`)
+      setProject(res.data)
+
+    } catch (err) {
+      setErr(err.data)
+    }
+  }, [pro_id, last_id])
+
+  const getFrames = useCallback(async () => {
+    const res = await axios.get(`/api/frames/all/${pro_id}`)
+      setFrames(res.data)
+      if (res.data.length === 0 || !res.data.length) {
+        setCountFrames(false)
+      } else {
+        setCountFrames(true)
+      }
+  }, [pro_id])
+
+  const getFrame = useCallback(async () => {
+    try {
+      const res = await axios.get(`/api/frames/${pro_id}/${frameId}`)
+      setFrame(res.data)
+      
+    } catch (err) {
+      setErr(err.data)
+    }
+  }, [pro_id, frameId])
+
   useEffect(() => {
     const permission = async () => {
       try {
@@ -131,20 +234,14 @@ const Project = () => {
           console.log(err)
       }
     }
-    const getProject = async (values) => {
-      try {
-        const res = await axios.get(`/api/projects/${pro_id}/1`)
-        setProject(res.data)
-        
-        if (res.data.length === 0 || !res.data.length) {
-          setCount(false)
-        } else {
-          setCount(true)
-        }
-      } catch (err) {
-        console.log(err)
-      }
+    if (isOnline) {
+
+    } else {
+      setErr(connectionErr)
     }
+    
+    const socket = io('http://localhost:8001')
+
     const getDesktop = async () => {
       if (last_id) {
         try {
@@ -159,30 +256,8 @@ const Project = () => {
         setValid(false)
       }
     }
-    const getProjects = async () => {
-      const res = await axios.get(`/api/projects/1?q=${query}`)
-      setProjects(res.data)
-      if (res.data.length === 0 || !res.data.length) {
-        setCount(false)
-      } else {
-        setCount(true)
-      }
-    } 
-    const getFrames = async () => {
-      const res = await axios.get(`/api/frames/all/3`)
-      setFrames(res.data)
-      if (res.data.length === 0 || !res.data.length) {
-        setCountFrames(false)
-      } else {
-        setCountFrames(true)
-      }
-    }  
-    if (fra_id) {
-      console.log("aaa")
-      const getFrame = async () => {
-        const res = await axios.get(`/api/frames/3/${fra_id}`)
-        setFrame(res.data)
-      } 
+
+    if (frameId) {
       getFrame()
     } else {
       
@@ -192,7 +267,52 @@ const Project = () => {
   getDesktop()
   getProjects()
   getFrames()
-  }, [use_id, query, last_id, pro_id, des_id, checkUserPermission, fra_id])
+
+  socket.on('projectUpdated', (data) => {
+    if (data.pro_id === pro_id) {
+      getProject()
+    } else {
+      getProjects()
+    }
+  })
+
+  socket.on('projectDeleted', (data) => {
+    if (data.pro_id === pro_id) {
+      setValid(false)
+    } else {
+      getProjects()
+    }
+  })
+
+  socket.on('projectCreated', () => {
+      getProjects()
+  })
+
+  socket.on('frameUpdated', (data) => {
+    if (data.fra_id === frameId) {
+      getFrame()
+    } else {
+      getFrames()
+    }
+  })
+
+  socket.on('frameDeleted', (data) => {
+    if (data.fra_id === frameId) {
+      setCountFrames(false)
+      setErr("O quadro foi excluído por um membro!")
+    } else {
+      getFrames()
+    }
+  })
+
+  socket.on('frameCreated', () => {
+      getFrames()
+  })
+
+
+
+
+  }, [use_id, query, last_id, pro_id, des_id, checkUserPermission, frameId, getFrame, getFrames, getProject, getProjects])
 
   return (
     <div>
@@ -229,7 +349,7 @@ const Project = () => {
           <div className='space'></div>
           <div className="cards">
 
-            {valid && projects.length !== 0 ? (
+            {projects && projects.length !== 0 ? (
             <span className='left'>Outros projetos</span>) &&
             projects.map((project) => {
                 const firstLetter = project.pro_title.charAt(0).toUpperCase()

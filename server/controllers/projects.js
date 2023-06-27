@@ -3,18 +3,16 @@ import { db } from "../config/config.js"
 const state = "active"
 
 export const getAllProjects = (req, res) => {
-    const q = "SELECT * FROM pro_projects WHERE des_id = ? AND pro_state = 'active'"
+    const q = "SELECT * FROM pro_projects WHERE des_id = ? AND pro_id <> ? AND pro_state = 'active'"
 
-    const values = [
-        req.params.des_id
+    const values =  [
+        req.params.des_id,
+        req.params.pro_id
     ]
-
-    console.log("bbb")
-    
 
     db.query(q, values, (err, data) => {
         if (err) {
-            return res.status(500).json(err)
+            return res.status(500).json("Houve um erro ao obter os projetos!")
         } 
         const { q } = req.query
 
@@ -28,7 +26,6 @@ export const getAllProjects = (req, res) => {
             }           
             return res.status(200).json(search(data))      
         } else {
-            console.log(data)
             return res.status(200).json(data)
         }
     })
@@ -41,8 +38,6 @@ export const getProject = (req, res) => {
         req.params.pro_id,
         req.params.des_id
     ]
-
-    console.log(values)
 
     db.query(q, values, (err, data) => {
         if (err) {
@@ -64,11 +59,12 @@ export const postProject = (req, res) => {
         req.params.uda_id
     ]
 
-    console.log(values)
     db.query(q, [values], (err, data) => {
         if (err) {
             return res.status(500).json(err)
         }
+        req.io.emit('projectCreated', { projectId: data.insertId })
+
         return res.status(200).json("Projeto criado com sucesso!")
     })
 }

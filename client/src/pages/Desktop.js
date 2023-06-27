@@ -9,13 +9,14 @@ import ErrorDisplay from '../functions/HandleError'
 import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit, AiOutlineUsergroupAdd } from 'react-icons/ai'
 import moment from 'moment'
 import { useForm } from 'react-hook-form'
-import { RiEdit2Fill, RiHome2Line, RiHome6Line, RiHomeLine, RiLayoutBottom2Fill, RiLayoutBottom2Line, RiMore2Fill } from 'react-icons/ri'
+import { RiEdit2Fill, RiHome2Line, RiHome6Line, RiHomeLine, RiMore2Fill } from 'react-icons/ri'
 import { io } from 'socket.io-client'
 
 
-const Workspace = () => {
+const Desktop = () => {
   const [showModal, setShowModal] = useState(false)
-  const [showModalProject, setShowModalProject] = useState(false)
+  const [showModalUpdate, setShowModalUpdate] = useState(false)
+  const [showModalDelete, setShowModalDelete] = useState(false)
 
   const {register, formState: {errors, isValid}, handleSubmit} = useForm({
     mode: "all"
@@ -26,44 +27,36 @@ const Workspace = () => {
   const use_id = currentUser?.use_id
   const last_id = currentUser?.use_lastDesktop
   const uda_id = currentUser?.uda_id
+  const des_id = location.pathname.split("/")[2]
+
   const createdAt = moment(Date.now()).format("YYYY-MM-DD HH:mm:ss")
-
-  const [inputDesktop, setInputDesktop] = useState({
-    des_title: "",
-    des_description: "",
-    des_createdAt: createdAt
-  })
-
-  const [inputProject, setInputProject] = useState({
-    pro_title: "",
-    pro_description: "",
-    pro_createdAt: createdAt,
-    uda_id: currentUser?.uda_id,
-    des_id: currentUser?.use_lastDesktop
-  })
 
   const handleOpenModal = () => {
     setShowModal(true)
   }
-
-  const handleOpenModalProject = () => {
-    setShowModalProject(true)
-  }
-
   const handleCloseModal = () => {
     setShowModal(false)
   }
 
-  const handleCloseModalProject = () => {
-    setShowModalProject(false)
+  const handleOpenModalUpdate = () => {
+    handlePatch(lastDesktop[0]?.des_title, lastDesktop[0]?.des_description)
+    setShowModalUpdate(true)
+  }
+
+  const handleCloseModalUpdate = () => {
+    setShowModalUpdate(false)
   }
 
   const handleChangeDesktop = e => {
     setInputDesktop(prev => ({...prev, [e.target.name]: e.target.value}))
   }
 
-  const handleChangeProject = e => {
-    setInputProject(prev => ({...prev, [e.target.name]: e.target.value}))
+  const handleOpenModalDelete = () => {
+    setShowModalDelete(true)
+  }
+
+  const handleChangeUpdateDesktop = e => {
+    setInputUpdateDesktop(prev => ({...prev, [e.target.name]: e.target.value}))
   }
 
   const navigate = useNavigate()
@@ -72,10 +65,26 @@ const Workspace = () => {
   const [valid, setValid] = useState(true)
   const [query, setQuery] = useState("")
   const [count, setCount] = useState(true)
-  const [countProject, setCountProject] = useState(true)
   const [lastDesktop, setLastDesktop] = useState([])
-  const [projects, setProjects] = useState([])
   const [err, setErr] = useState("")
+
+  const [inputDesktop, setInputDesktop] = useState({
+    des_title: "",
+    des_description: "",
+    des_createdAt: createdAt
+  })
+
+  const [inputUpdateDesktop, setInputUpdateDesktop] = useState({
+    des_titleUpdated: "",
+    des_descriptionUpdated: ""
+  })
+
+  const handlePatch = async (title, description) => {
+    await setInputUpdateDesktop({
+        des_titleUpdated: title,
+        des_descriptionUpdated: description
+    })
+  }
 
   const submitChangeDesktop = async (values) => {
     try {
@@ -95,14 +104,25 @@ const Workspace = () => {
     setShowModal(false)
   }
 
-  const SubmitProject = async () => {
+  const SubmitUpdateDesktop = async () => {
     try {
-      await axios.post(`/api/projects/post/${uda_id}/${last_id}`, inputProject)
+      await axios.patch(`/api/desktops/patch/${last_id}`, inputUpdateDesktop)
     } catch (err) {
-      console.log(err)
-      //setErr(err.response.data)
+        console.log(err)
+      setErr(err.data)
     }
-    setShowModalProject(false)
+    setShowModalUpdate(false)
+  }
+
+  const SubmitDeleteDesktop = async () => {
+    try {
+        const res = await axios.patch(`/api/desktops/delete/${last_id}`)
+        setErr(res.data)
+    } catch (err) {
+        console.log(err)
+      setErr(err.data)
+    }
+    setShowModalDelete(false)
   }
 
   const { handleOnlineStatus, connectionErr } = useHandleDatabaseRequest()
@@ -114,10 +134,15 @@ const Workspace = () => {
     socket.on('connect', () => {
       console.log('Conectado ao servidor do Socket.io')
     })
-  
-    socket.on('projectCreated', (data) => {
-      // Atualize a lista de projetos com o novo projeto recebido
-      console.log('Novo projeto criado:', data.projectId)
+
+    socket.on('desktopUpdated', (data) => {
+        // Atualize a lista de projetos com o novo projeto recebido
+        console.log('Área atualizada:', data.desktopId)
+    })
+
+    socket.on('desktopDeleted', () => {
+        // Atualize a lista de projetos com o novo projeto recebido
+        console.log('Área deletada!')
     })
   
     socket.on('disconnect', () => {
@@ -135,20 +160,6 @@ const Workspace = () => {
     }
     fetchData()
   })
-
-  const getProjects = useCallback(async () => {
-    try {
-      const res = await axios.get(`/api/projects/${last_id}/0`)
-      setProjects(res.data)
-      if (res.data.length === 0 || !res.data.length) {
-        setCountProject(false)
-      } else {
-        setCountProject(true)
-      }
-    } catch (err) {
-      setErr(err.data)
-    }
-  }, [last_id])
 
   const getLastDesktop = useCallback(async () => {
     try {
@@ -189,44 +200,40 @@ const Workspace = () => {
       setValid(false)
       setErr(connectionErr)
     }
-  
+
     getDesktop()
-    getProjects()
+    getLastDesktop()
   
-    socket.on('projectCreated', () => {
-      getProjects() 
-    })
     socket.on('desktopUpdated', () => {
       getLastDesktop()
     })
+
     socket.on('desktopDeleted', (data) => {
-      if (data.des_id === last_id) {
-        submitChangeDesktop(null)
-      }
+        console.log(data.des_id)
+        console.log(last_id)
+        if (data.des_id === des_id) {
+            submitChangeDesktop(null)
+        }
     })
   
     return () => {
       socket.disconnect()
     }
-  }, [use_id, query, last_id, isOnline, connectionErr, getProjects, getLastDesktop])
+  }, [use_id, query, last_id, isOnline, connectionErr, getLastDesktop, valid])
 
   const [DropIsOpen, setDropIsOpen] = useState(false)
 
   function Dropdown () {
     return (
       <div className="prof_dropdown">
-        <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); navigate(`/desktop/${last_id}`)}}>
+        <div className="prof_item" disabled={true} onClick={() => {setDropIsOpen(!DropIsOpen); handleOpenModalUpdate()}}>
           <AiOutlineEdit/>
           <p>Editar Área de Trabalho</p>
         </div>
-        <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); navigate(`/desktop/${last_id}`)}}>
-          <AiOutlineUsergroupAdd/>
-          <p>Gerenciar Membros</p>
+        <div className="prof_item" disabled={true} onClick={() => {setDropIsOpen(!DropIsOpen); handleOpenModalDelete()}}>
+          <AiOutlineDelete/>
+          <p>Excluir Área de Trabalho</p>
         </div>
-        <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); setShowModalProject(true)}}>
-        <RiLayoutBottom2Line/>
-        <p>Criar projeto</p>
-      </div>
       </div>
     )
   }
@@ -234,6 +241,7 @@ const Workspace = () => {
   return (
     <div>
       {Logado()}
+      {parseInt(last_id) === parseInt(des_id) ? console.log("desktop igual") : (navigate('/desktop'))}
       <section className="home-section">
         <div className="submenuproj">
           <div className="textmain">
@@ -253,7 +261,7 @@ const Workspace = () => {
               return (
                 <>
                   <span className='left'>Área atual</span>
-                  <div className="card-last card-2" key={desktop.des_id}>
+                  <div className="card card-2" key={desktop.des_id}  onClick={() => navigate('/desktop')}>
                     <div className="card__letter">
                       <h3>{firstLetter}</h3>
                     </div>
@@ -271,10 +279,10 @@ const Workspace = () => {
           </div>
 
           <div className="cards">
-          {(valid || count) && desktop.length !== 0 && (
+          {valid && desktop.length !== 0 && (
           <span className='left'>Outras áreas de trabalho</span>
           )}
-            {(valid || count) && desktop.length !== 0 && desktop.map((desktop) => {
+            {valid && desktop.length !== 0 && desktop.map((desktop) => {
               const firstLetter = desktop.des_title.charAt(0).toUpperCase()
               return (
                 <div className="card card-2" key={desktop.des_id} onClick={() => submitChangeDesktop(desktop.des_id)}>
@@ -285,20 +293,11 @@ const Workspace = () => {
                 </div>
               )
             })}
-            {!valid && !count && (
-              <div className="none">
-                <h4>Nenhuma área de trabalho</h4>
-                <p>Começe criando uma área de trabalho</p>
-                <button className='add_desktop' onClick={() => handleOpenModal()}>Adicionar área de trabalho +</button>
-              </div>
-            )
-            }
             {!count && (
               <div className="none">
                 <p>Nenhum resultado encontrado!</p>
               </div>
-            )
-                
+            )    
             }
           </div>
         </div>
@@ -316,8 +315,11 @@ const Workspace = () => {
 
                   <div className="projeto-description">
                     <p>{desktop.des_description}</p>
-                    <span className="projeto-edit"><p>Ver mais</p></span>
+                    <br/>
+                    <span className="projeto-edit" onClick={() => handleOpenModalUpdate()}><p>Editar Área de Trabalho</p></span>
+                    <span className="projeto-edit" onClick={() => handleOpenModalDelete()}><p>Excluir Área de Trabalho</p></span>
                   </div>
+
                  
                 </div>
               )
@@ -326,56 +328,11 @@ const Workspace = () => {
               <div><p>Nada</p></div>
             )}
             
-          </div>
-          {valid ? (
-            <>
-              <hr className="hr2"/>
-              <div className="cards-container">
-                {projects && projects.length > 0 && projects.map((projects) => {
-                  return (
-                    <div className="cards2">
-                      <div className="cookie-card">
-                        <h4>{projects.pro_title}</h4>
-                        <p className="description">{projects.pro_description}</p>
-                        <div className="actions">
-                          <button className="pref" onClick={() => navigate(`${last_id}/project/${projects.pro_id}`)}>Editar projeto</button>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
-                {countProject ? (
-                  <>
-                    <div className="cards2">
-                      <div className="cookie-card-add">
-                        <h4>Criar novo projeto</h4>
-                        <h4 className="description">+</h4>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="projeto-null project">
-                    <div className="projeto-null-title">
-                      <h4>Nenhum projeto cadastrado</h4>
-                      <p>Crie um projeto para poder gerar seus quadros</p>
-                    </div>
-                    <button className="add_desktop" onClick={() => handleOpenModalProject()}>Adicionar projeto +</button>
-                  </div>
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="projeto-null">
-              <div className="projeto-null-title">
-                <h4>Nenhuma área de trabalho cadastrada</h4>
-                <p>Crie uma área de trabalho para poder registrar seus projetos</p>
-              </div>
-              <button className="add_desktop" onClick={() => handleOpenModal()}>Adicionar área de trabalho +</button>
-            </div>
-          )}
-          
+          </div> 
+          <hr className="hr2"/>     
         </div>
       </section>
+
 
       {showModal && (
         <div className="modal">
@@ -410,7 +367,7 @@ const Workspace = () => {
               {errors?.des_description?.type === 'minLength' && <p className="form_error_message">A descrição da área de trabalho precisa conter no mínimo 10 caracteres</p>}
 
               <ul className="lista-datoss1">
-                <p onClick={handleCloseModal}>Cancelar</p>
+                <p onClick={() => handleCloseModal()}>Cancelar</p>
                 <button type="submit" disabled={!isValid}>Adicionar área de trabalho</button>
               </ul>
             </form>
@@ -419,41 +376,63 @@ const Workspace = () => {
         </div>
       )}
 
-      {showModalProject && (
+      {showModalUpdate && (
         <div className="modal">
           <div className="perfil-usuario-bioo">
             <div className="lista-topo">
-              <h3>Adicionar projeto</h3>
-              <span className="mdi mdi-close close" onClick={() => handleCloseModalProject()}><AiOutlineClose/></span>
+              <h3>Editar área de trabalho</h3>
+              <span className="mdi mdi-close close" onClick={() => handleCloseModalUpdate()}><AiOutlineClose/></span>
             </div>
 
-            <form className="lista-datoss" onSubmit={handleSubmit(SubmitProject)}>
-              <label>Nome do projeto</label>
+            <form className="lista-datoss" onSubmit={handleSubmit(SubmitUpdateDesktop)}>
+              <label>Nome da área de trabalho</label>
               <input
                 type="text"
-                placeholder="Insira o título do projeto"
+                placeholder="Insira o título da área de trabalho"
+                value={inputUpdateDesktop.des_titleUpdated}
                 className={errors?.pro_title && 'input-error'}
-                {...register('pro_title', {required: true, minLength: 4})}
-                onChange={handleChangeProject}
+                {...register('des_titleUpdated', {required: true, minLength: 4})}
+                onChange={handleChangeUpdateDesktop}
               />
-              {errors?.pro_title?.type === 'required' && <p className="form_error_message">Insira um nome para o projeto!</p>}
-              {errors?.pro_title?.type === 'minLength' && <p className="form_error_message">O nome do projeto precisa conter no mínimo 4 caracteres</p>}
+              {errors?.des_titleUpdated?.type === 'required' && <p className="form_error_message">Insira um nome para a área de trabalho!</p>}
+              {errors?.des_titleUpdated?.type === 'minLength' && <p className="form_error_message">O nome da área de trabalho precisa conter no mínimo 4 caracteres</p>}
 
               <div className='space'></div>
-              <label>Descrição do projeto</label>
+              <label>Descrição da área de trabalho</label>
               <input
                 type="text"
-                placeholder="Insira a descrição do projeto"
-                className={errors?.pro_description && 'input-error'}
-                {...register('pro_description', {required: true, minLength: 10})}
-                onChange={handleChangeProject}
+                placeholder="Insira a descrição da área de trabalho"
+                value={inputUpdateDesktop.des_descriptionUpdated}
+                className={errors?.des_descriptionUpdated && 'input-error'}
+                {...register('des_descriptionUpdated', {required: true, minLength: 10})}
+                onChange={handleChangeUpdateDesktop}
               />
-              {errors?.pro_description?.type === 'required' && <p className="form_error_message">Insira uma descrição para o projeto!</p>}
-              {errors?.pro_description?.type === 'minLength' && <p className="form_error_message">A descrição do projeto precisa conter no mínimo 10 caracteres</p>}
+              {errors?.des_descriptionUpdated?.type === 'required' && <p className="form_error_message">Insira uma descrição para a área de trabalho!</p>}
+              {errors?.des_descriptionUpdated?.type === 'minLength' && <p className="form_error_message">A descrição da área de trabalho precisa conter no mínimo 10 caracteres</p>}
 
               <ul className="lista-datoss1">
-                <p onClick={handleCloseModalProject}>Cancelar</p>
-                <button type="submit" disabled={!isValid}>Adicionar projeto</button>
+                <p onClick={() => handleCloseModalUpdate()}>Cancelar</p>
+                <button type="submit" disabled={!isValid}>Editar área de trabalho</button>
+              </ul>
+            </form>
+
+          </div>
+        </div>
+      )}
+
+      {showModalDelete && (
+        <div className="modal">
+          <div className="perfil-usuario-bioo">
+            <div className="lista-topo">
+              <h3>Excluir área de trabalho</h3>
+              <span className="mdi mdi-close close" onClick={() => setShowModalDelete(false)}><AiOutlineClose/></span>
+            </div>
+
+            <form className="lista-datoss" onSubmit={handleSubmit(SubmitDeleteDesktop)}>
+              <label>Tem certeza que deseja excluir a área de trabalho?</label>
+              <ul className="lista-datoss1">
+                <p onClick={() => setShowModalDelete(false)}>Cancelar</p>
+                <button type="submit">Excluir área de trabalho</button>
               </ul>
             </form>
 
@@ -464,4 +443,4 @@ const Workspace = () => {
   );
 };
 
-export default Workspace
+export default Desktop

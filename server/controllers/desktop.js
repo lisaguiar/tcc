@@ -37,7 +37,6 @@ export const getLastDesktop = (req, res) => {
     const values = [
         req.params.des_id
     ]
-    console.log("aaa")
 
     db.query(q, values, (err, data) => {
         if (err) {
@@ -56,8 +55,6 @@ export const postDesktop = (req, res) => {
         state,
         req.body.des_createdAt
     ]
-
-    console.log(values)
 
     db.query(q, [values], (err, data) => {
         if (err) {
@@ -109,17 +106,36 @@ export const patchDesktop = (req, res) => {
     const q = "UPDATE des_desktop SET des_title = ?, des_description = ?, des_state = ? WHERE des_id = ?"
 
     const values = [
-        req.body.des_title, 
-        req.body.des_description, 
+        req.body.des_titleUpdated, 
+        req.body.des_descriptionUpdated, 
         state, 
         req.params.des_id
     ]
   
-    db.query(query, values, (err, data) => {
+    db.query(q, values, (err, data) => {
         if (err) {
             return res.status(400).json(err)
         }
+        req.io.emit('desktopUpdated')
+
         return res.status(200).json("Área de Trabalho atualizada!")
+    })
+}
+
+export const deleteDesktop = (req, res) => {
+    const q = "UPDATE des_desktop SET des_state = 'disabled' WHERE des_id = ?"
+
+    const values = [
+        req.params.des_id
+    ]
+  
+    db.query(q, values, (err, data) => {
+        if (err) {
+            return res.status(400).json(err)
+        }
+        req.io.emit('desktopDeleted', {des_id: req.params.des_id})
+
+        return res.status(200).json("Área de Trabalho excluída!")
     })
 }
 

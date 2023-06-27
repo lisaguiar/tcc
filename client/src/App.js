@@ -16,6 +16,7 @@ import Functionalities from './pages/Functionalities'
 import Workspace from './pages/Workspace'
 import Sidebar from './components/Sidebar'
 import Project from './pages/Project'
+import Desktop from './pages/Desktop'
 
 
 const Layout = () => {
@@ -48,6 +49,9 @@ const router = createBrowserRouter ([
       },
       {
         path:'/desktop', element: <Workspace/>
+      },
+      {
+        path:'/desktop/:des_id', element: <Desktop/>
       },
       {
         path:'/desktop/:des_id/project/:pro_id', element: <Project/>

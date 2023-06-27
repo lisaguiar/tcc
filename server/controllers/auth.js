@@ -21,7 +21,7 @@ export const register = (req, res) => {
             req.body.use_email,
             hash,
             req.body.use_name,
-            "kkk",
+            req.body.use_createdAt,
             state
         ]
 

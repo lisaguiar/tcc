@@ -33,12 +33,17 @@ export const AuthContextProvider = ({children})=> {
         const use_id = currentUser?.use_id
         const des_id = inputs
 
-        const res = await axios.get(`/api/desktop/${use_id}/${des_id}`)
-        const uda_id = res.data[0].uda_id
-        const per_id = res.data[0].per_id
-        const newUserData = { ...currentUser, use_lastDesktop: des_id, uda_id: uda_id, per_id: per_id}
+        let newUserData
+
+        if (des_id) {
+            const res = await axios.get(`/api/desktop/${use_id}/${des_id}`)
+            const uda_id = res.data[0].uda_id
+            const per_id = res.data[0].per_id
+            newUserData = { ...currentUser, use_lastDesktop: des_id, uda_id: uda_id, per_id: per_id}
+        } else {
+            newUserData = {...currentUser, use_lastDesktop: null, uda_id: null, per_id: null}
+        }
         await setCurrentUser(() => newUserData)
-        //window.location.reload()
     }
 
     const checkUserPermission = async (inputs) => {

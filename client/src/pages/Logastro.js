@@ -27,7 +27,7 @@ const Logastro = () => {
         use_name: "",
         use_email: "",
         use_password: "",
-        use_date: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss")
+        use_createdAt: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss")
     })
 
     const [inputsLogin, setInputsLogin] = useState({
@@ -51,6 +51,7 @@ const Logastro = () => {
             const res = await axios.post("/api/register", inputsRegister)
             console.log(res.data)  
         } catch (err) {
+            console.log(err)
             setErr(err.response.data)
         }
     }
