@@ -14,70 +14,19 @@ import ErrorDisplay from '../functions/HandleError'
 import { RiInboxLine, RiLayoutBottom2Line, RiMore2Fill } from 'react-icons/ri'
 import { useForm } from 'react-hook-form'
 import moment from 'moment'
+import SearchBar from '../functions/SearchBar'
+import Modal from '../functions/Modal'
 
 const Project = () => {
-  const [showModalProject, setShowModalProject] = useState(false)
-  const [showModalFrame, setShowModalFrame] = useState(false)
-  const [showModalFrameUpdate, setShowModalFrameUpdate] = useState(false)
-  const [showModalFrameDelete, setShowModalFrameDelete] = useState(false)
 
-  const [showModalUpdateTable, setShowModalUpdateTable] = useState(false)
-  const [showModalDeleteTable, setShowModalDeleteTable] = useState(false)
-  const [showModalCreateTable, setShowModalCreateTable] = useState(false)
-  
-  const {register, formState: {errors, isValid}, handleSubmit} = useForm({
+  const [openModal, setOpenModal] = useState(false)
+  const [inputType, setInputType] = useState("")
+  const [inputOperation, setInputOperation] = useState("")
+  const [inputItem, setInputItem] = useState("")
+
+  const {register, formState: {errors}, handleSubmit} = useForm({
     mode: "all"
   })
-
-  const handleOpenModalProject = () => {
-    setShowModalProject(true)
-  }
-
-  const handleOpenModalFrame = () => {
-    setShowModalFrame(true)
-  }
-
-  const handleOpenModalTable = () => {
-    setShowModalCreateTable(true)
-  }
-
-  const handleOpenModalFrameUpdate = async () => {
-    await handlePatch(frame[0]?.fra_title, frame[0]?.fra_description)
-    setShowModalFrameUpdate(true)
-  }
-
-  const handleOpenModalTableUpdate = async (values) => {
-    await handlePatchTable(values.kat_title, values.kat_description)
-    setShowModalUpdateTable(true)
-  }
-
-  const handleOpenModalFrameDelete = () => {
-    setShowModalFrameDelete(true)
-  }
-
-  const handleOpenModalTableDelete = () => {
-    setShowModalDeleteTable(true)
-  }
-
-  const handleCloseModalProject = () => {
-    setShowModalProject(false)
-  }
-
-  const handleCloseModalFrame = () => {
-    setShowModalFrame(false)
-  }
-
-  const handleCloseModalFrameUpdate = () => {
-    setShowModalFrameUpdate(false)
-  }
-
-  const handleCloseModalTableUpdate = () => {
-    setShowModalUpdateTable(false)
-  }
-
-  const handleCloseModalTableCreate = () => {
-    setShowModalCreateTable(false)
-  }
 
   const navigate = useNavigate()
 
@@ -109,163 +58,25 @@ const Project = () => {
   const [err, setErr] = useState("")
   const [frameId, setFrameId] = useState("")
 
-  const [inputFrame, setInputFrame] = useState({
-    fra_title: "",
-    fra_description: "",
-    fra_createdAt: createdAt,
-    mod_id: 1
-  })
-
-  const [inputProject, setInputProject] = useState({
-    pro_title: "",
-    pro_description: "",
-    pro_createdAt: createdAt,
-    uda_id: currentUser?.uda_id,
-    des_id: currentUser?.use_lastDesktop
-  })
-
-  const [inputUpdateFrame, setInputUpdateFrame] = useState({
-    fra_titleUpdated: "",
-    fra_descriptionUpdated: ""
-  })
-
-
-  const [inputUpdateTable, setInputUpdateTable] = useState({
-    kat_titleUpdated: "",
-    kat_descriptionUpdates: "",
-    kat_createdAt: createdAt,
-    col_id: 1,
-    kat_position: 1
-  })
-
-  const [inputCreateTable, setInputCreateTable] = useState({
-    kat_title: "",
-    kat_description: "",
-    kat_createdAt: createdAt,
-    col_id: 1,
-    kat_position: 1
-  })
-
-  const handlePatch = async (title, description) => {
-    await setInputUpdateFrame({
-        fra_titleUpdated: title,
-        fra_descriptionUpdated: description
-    })
-  }
-
-  const handlePatchTable = async (title, description) => {
-    await setInputUpdateTable({
-        kat_titleUpdated: title,
-        kat_descriptionUpdated: description
-    })
-  }
-
-  const SubmitProject = async () => {
-    try {
-      const res = await axios.post(`/api/projects/post/${uda_id}/${last_id}`, inputProject)
-
-      navigate(`/desktop/${des_id}/project/${res.data}`)
-    } catch (err) {
-      setErr(err.data)
-    }
-    setShowModalProject(false)
-  }
-
-  const SubmitUpdateFrame = async () => {
-    try {
-      await axios.patch(`/api/frames/patch/${fra_id}`, inputUpdateFrame)
-    } catch (err) {
-      setErr(err.data)
-    }
-    setShowModalFrameUpdate(false)
-  }
-
-  const SubmitDeleteFrame = async () => {
-    try {
-        const res = await axios.patch(`/api/frames/delete/${fra_id}`)
-        setErr(res.data)
-    } catch (err) {
-      setErr(err.data)
-    }
-    setShowModalFrameDelete(false)
-  }
-
-  const SubmitFrame = async () => {
-    try {
-      const res = await axios.post(`/api/frames/post/${uda_id}/${pro_id}`, inputFrame)
-      setInputFrame({
-        fra_title: "",
-        fra_description: "",
-        fra_createdAt: createdAt,
-        mod_id: 1
-      })
-    } catch (err) {
-      setErr(err.response.data)
-    }
-    setShowModalFrame(false)
-  }
-
-  const SubmitUpdateTable = async (values) => {
-    const kat_id = values
-    try {
-      await axios.patch(`/api/kanban/patch/${kat_id}`, inputUpdateFrame)
-    } catch (err) {
-      setErr(err.data)
-    }
-    setShowModalUpdateTable(false)
+  const handleChange = (updatedFunction, fieldName, e) => {
+    updatedFunction((prev) => ({...prev, [fieldName]: e.target.value}))
+    console.log(fieldName)
   }
 
   const handleSubmitDeleteTable = async (values) => {
-      const kat_id = values
+    const kat_id = values
 
-      await SubmitDeleteTable(kat_id)
-  }
-  const SubmitDeleteTable = async (kat_id) => {
-    try {
+    await SubmitDeleteTable(kat_id)
+}
+const SubmitDeleteTable = async (kat_id) => {
+  try {
       const res = await axios.patch(`/api/kanban/table/delete/${kat_id}`)
       setErr(res.data)
-    } catch (err) {
+  } catch (err) {
       setErr(err.response.data)
-    }
-    setShowModalDeleteTable(false)
-  };
-
-  const SubmitTable = async () => {
-    try {
-      const res = await axios.post(`/api/kanban/table/${uda_id}/${fra_id}`, inputCreateTable)
-      setInputCreateTable({
-        kat_title: "",
-        kat_description: "",
-        kat_createdAt: createdAt,
-        mod_id: 1,
-        kat_position: 1
-      })
-    } catch (err) {
-      setErr(err.response.data)
-    }
-    setShowModalCreateTable(false)
   }
-
-
-  const handleChangeFrame = e => {
-    setInputFrame(prev => ({...prev, [e.target.name]: e.target.value}))
-  }
-
-  const handleChangeProject = e => {
-    setInputProject(prev => ({...prev, [e.target.name]: e.target.value}))
-  }
-
-  const handleChangeUpdateFrame = e => {
-    setInputUpdateFrame(prev => ({...prev, [e.target.name]: e.target.value}))
-  }
-
-  const handleChangeUpdateTable = e => {
-    setInputUpdateTable(prev => ({...prev, [e.target.name]: e.target.value}))
-  }
-
-  const handleChangeCreateTable = e => {
-    setInputCreateTable(prev => ({...prev, [e.target.name]: e.target.value}))
-  }
+  //setShowModalDeleteTable(false)
+}
 
   const location = useLocation()
   const des_id = location.pathname.split("/")[2]
@@ -274,6 +85,10 @@ const Project = () => {
 
   const handleFrameId = () => {
     setFrameId(location.pathname.split("/")[6])
+  }
+
+  const handleOpenModal = (value) => {
+    setOpenModal(value)
   }
 
   function RenderKanban({ frame }) {
@@ -399,44 +214,7 @@ const Project = () => {
       navigate(`/desktop/${des_id}/project/${pro_id}/frame/${frame.fra_id}`)
     }
 
-  useEffect(() => {
-    const socket = io('http://localhost:8001')
-  
-    socket.on('connect', () => {
-      console.log('Conectado ao servidor do Socket.io')
-    })
 
-    socket.on('desktopDeleted', () => {
-        console.log('Área deletada!')
-    })
-
-    socket.on('frameCreated')
-
-    socket.on('frameUpdated')
-
-    socket.on('frameDeleted')
-
-    socket.on('projectCreated')
-
-    socket.on('projectUpdated')
-
-    socket.on('projectDeleted')
-  
-    socket.on('disconnect', () => {
-      console.log('Desconectado do servidor do Socket.io')
-    })
-  
-    return () => {
-      socket.disconnect()
-    }
-  }, [])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      isOnline = await handleOnlineStatus()
-    }
-    fetchData()
-  })
 
   console.log(frameId)
 
@@ -522,96 +300,103 @@ const Project = () => {
 
 
   useEffect(() => {
+    // Inicialização do socket
+    const socket = io('http://localhost:8001');
+  
+    socket.on('connect', () => {
+      console.log('Conectado ao servidor do Socket.io');
+    });
+  
+    socket.on('disconnect', () => {
+      console.log('Desconectado do servidor do Socket.io');
+    });
+  
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+  
+  useEffect(() => {
+    // Verifique a permissão do usuário
     const permission = async () => {
       try {
-          const res = await checkUserPermission(des_id)
-          if (!res) {
-              window.location.replace("/desktop")
-          }
+        const res = await checkUserPermission(des_id);
+        if (!res) {
+          window.location.replace('/desktop');
+        }
       } catch (err) {
-          setErr(err.data)
+        setErr(err.data);
       }
-    }
-
+    };
+  
     if (isOnline) {
-
-    } else {
-      setErr(connectionErr)
-    }
-    
-    const socket = io('http://localhost:8001')
-
-    if (fra_id) {
-      handleFrameId()
-      getFrame()
-    }
-
-    if (frame) {
-      validateFrameModId()
-
-      if (modId === 1) {
-        getKanbanTable()
-        getKanbanCards()
-      } else if (modId === 2) {
-
+      // Execute ações relacionadas à conexão online
+      permission();
+      getFrames();
+      getProject();
+      getProjects();
+      const socket = io('http://localhost:8001');
+  
+      if (fra_id) {
+        handleFrameId();
+        getFrame();
       }
-    }
-
-  permission()
-  getFrames()
-  getProject()
-  getProjects()
-
-  socket.on('projectUpdated', (data) => {
-    if (data.pro_id === pro_id) {
-      getProject()
+  
+      if (frame) {
+        validateFrameModId();
+  
+        if (modId === 1) {
+          getKanbanTable();
+          getKanbanCards();
+        } else if (modId === 2) {
+          // Lógica para modId igual a 2
+        }
+      }
+  
+      socket.on('projectUpdated', (data) => {
+          getProjects()
+      })
+  
+      socket.on('projectDeleted', (data) => {
+          getProjects()
+      })
+  
+      socket.on('projectCreated', () => {
+        getProjects()
+      });
+  
+      socket.on('frameUpdated', (data) => {
+        getFrame();
+        getFrames();
+      });
+  
+      socket.on('frameDeleted', (data) => {
+        if (data.fra_id === frameId) {
+          setCountFrames(false);
+          setErr('O quadro foi excluído por um membro!');
+        } else {
+          getFrames();
+        }
+      });
+  
+      socket.on('frameCreated', () => {
+        getFrames();
+      });
+  
+      socket.on('kanbanCreated', () => {
+        handleFrame();
+        getKanbanTable();
+        getKanbanCards();
+      });
+  
+      socket.on('kanbanUpdated', (data) => {
+        getKanbanTable();
+        getKanbanCards();
+      });
     } else {
-      getProjects()
+      setErr(connectionErr);
     }
-  })
-
-  socket.on('projectDeleted', (data) => {
-    if (data.pro_id === pro_id) {
-      setValid(false)
-    } else {
-      getProjects()
-    }
-  })
-
-  socket.on('projectCreated', () => {
-      getProjects()
-  })
-
-  socket.on('frameUpdated', (data) => {
-      getFrame()
-      getFrames()
-  })
-
-  socket.on('frameDeleted', (data) => {
-    if (data.fra_id === frameId) {
-      setCountFrames(false)
-      setErr("O quadro foi excluído por um membro!")
-    } else {
-      getFrames()
-    }
-  })
-
-  socket.on('frameCreated', () => {
-      getFrames()
-  })
-
-  socket.on('kanbanCreated', () => {
-    handleFrame()
-    getKanbanTable()
-    getKanbanCards()
-  }) 
-
-  socket.on('kanbanUpdated', (data) => {
-      getKanbanTable()
-      getKanbanCards()
-  })
-
-  }, [use_id, query, last_id, pro_id, des_id, checkUserPermission, fra_id, frameId, getFrame, getFrames, getProject, getProjects, modId, getKanbanCards, getKanbanTable])
+  }, [use_id, query, last_id, pro_id, des_id, openModal, checkUserPermission, fra_id, frameId, getFrame, getFrames, getProject, getProjects, modId, getKanbanCards, getKanbanTable]);
 
   const [DropIsOpen, setDropIsOpen] = useState(false)
 
@@ -619,15 +404,15 @@ const Project = () => {
     if (frameId) {
       return (
         <div className="prof_dropdown">
-          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); handleOpenModalFrameUpdate()}}>
+          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); /*handleOpenModalFrameUpdate()*/ }}>
             <AiOutlineEdit/>
             <p>Editar Quadro</p>
           </div>
-          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); handleOpenModalFrameDelete()}}>
+          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); /*handleOpenModalFrameDelete()*/ }}>
             <AiFillDelete/>
             <p>Excluir Quadro</p>
           </div>
-          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); setShowModalFrame(true)}}>
+          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); /*setShowModalFrame(true)*/ }}>
             <RiLayoutBottom2Line/>
             <p>Criar Quadro</p>
           </div>
@@ -636,15 +421,33 @@ const Project = () => {
     } else {
       return (
         <div className="prof_dropdown">
-          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); navigate(`/desktop/${des_id}/project/${pro_id}/edit`)}}>
+          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen);
+             setInputType("projeto")
+             setInputOperation("update")
+             setInputItem(project)
+             setOpenModal(true)
+            
+            
+            /*navigate(`/desktop/${des_id}/project/${pro_id}/edit`)*/}}>
             <AiOutlineEdit/>
             <p>Editar Projeto</p>
           </div>
-          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); navigate(`/desktop/${des_id}/project/${pro_id}/edit`)}}>
+          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); 
+            setInputType("projeto")
+            setInputOperation("delete")
+            setInputItem(project)
+            setOpenModal(true)
+            
+            /*navigate(`/desktop/${des_id}/project/${pro_id}/edit`)}*/ }}>
             <AiFillDelete/>
             <p>Excluir Projeto</p>
           </div>
-          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); setShowModalProject(true)}}>
+          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); 
+            setInputType("projeto")
+            setInputOperation("create")
+            setOpenModal(true)
+            
+            /*setShowModalProject(true)*/}}>
             <RiLayoutBottom2Line/>
             <p>Criar projeto</p>
           </div>
@@ -658,69 +461,7 @@ const Project = () => {
     <div>
       {Logado()}
       <section className="home-section">
-        <div className="submenuproj">
-          <div className="textmain">
-            <AiOutlineEdit/>
-            <h4>Projetos</h4>
-          </div>
-          <div className="search">
-            <input className="searchbar" placeholder="🔍 Pesquisar" disabled={!valid} onChange={(e) => setQuery(e.target.value.toLowerCase())}/>
-            <button className="add__desktop" onClick={() => handleOpenModalProject()}>+</button>
-          </div>
-  
-          <div className='space'></div> 
-          <div className="cards">   
-            {valid && project.map((project) => {
-              const firstLetter = project.pro_title.charAt(0).toUpperCase()
-              return (
-                <>
-                  <span className='left'>Projeto atual</span>
-                  <div className="card-last card-2" key={project.pro_id}>
-                    <div className="card__letter">
-                      <h3>{firstLetter}</h3>
-                    </div>
-                    <h4 className="card__title">{project.pro_title}</h4>
-                  </div>
-                </>
-              )
-            })}
-          </div>
-
-          <div className='space'></div>
-
-          <div>
-            {err && <ErrorDisplay message={err} />}
-          </div>
-
-          <div className="cards">
-
-            {projects && valid && projects.length !== 0 && (
-            <span className='left'>Outros projetos</span>) &&
-            projects.map((project) => {
-                const firstLetter = project.pro_title.charAt(0).toUpperCase()
-                return (
-                  <div className="card card-2" key={project.pro_id} onClick={() => navigate(`/desktop/${des_id}/project/${project.pro_id}`)}>
-                    <div className="card__letter">
-                      <h3>{firstLetter}</h3>
-                    </div>
-                    <h4 className="card__title">{project.pro_title}</h4>
-                  </div>
-                )
-            }
-            )}
-            
-            {!valid && !projects && (navigate('/desktop'))}
-
-
-            {!count && valid && (
-              <div className="none">
-                <p>Nenhum resultado encontrado!</p>
-              </div>
-            )
-                
-            }
-          </div>
-        </div>
+        <SearchBar/>
         <div className="topo">
           <div className="projeto">
             {!frameId && project && project !== 0 && project.map((project) => {
@@ -761,6 +502,11 @@ const Project = () => {
             })}
           </div>
           <div className="quadro-map">
+
+            {openModal ? <Modal type={inputType} operation={inputOperation} modal={openModal} input={inputItem} openChange={handleOpenModal}/> : null}
+
+            {console.log(inputType + " " + inputOperation + " " + openModal)}
+
             {valid && frames.map((frame) => {
               return (
                 <div className="quadro-item" key={frame.fra_id} onClick={() => handleFrame(frame)}>
@@ -770,7 +516,10 @@ const Project = () => {
               )
             })}
             {valid && frames.length !== 0 ? (
-              <div className="quadro-item-add" onClick={() => handleOpenModalFrame()}>
+              <div className="quadro-item-add" onClick={() => {
+                    setInputType("quadro")
+                    setInputOperation("create")
+                    setOpenModal(true)}} >
                 <p>+</p>
               </div>
       
@@ -779,7 +528,10 @@ const Project = () => {
             {frame && (
               <>
                 <div className='add-frame'>
-                  <p onClick={() => handleOpenModalTable()}>Adicionar Tabela</p>
+                  <p onClick={() => {
+                    setInputType("tabela")
+                    setInputOperation("create")
+                    setOpenModal(true)}} >Adicionar Tabela</p>
                 </div>
               </>
             )}
@@ -790,14 +542,17 @@ const Project = () => {
             <>
               <hr className="hr2" />
               <div className="kanbans-container">
-
                 {frames.length === 0 && (
                   <div className="projeto-null project">
                     <div className="projeto-null-title">
                       <h4>Nenhum quadro cadastrado</h4>
                       <p>Crie um quadro para poder iniciar seu gerenciamento!</p>
                     </div>
-                    <button className="add_desktop" onClick={() => handleOpenModalFrame()}>Adicionar quadro +</button>
+                    <button className="add_desktop" 
+                    onClick={() => {
+                      setInputType("quadro")
+                      setInputOperation("create")
+                      setOpenModal(true)}}>Adicionar quadro +</button>
                   </div>
                 )}
 
@@ -822,197 +577,8 @@ const Project = () => {
           
         </div>
       </section>
-
-      {showModalProject && (
-        <div className="modal">
-          <div className="perfil-usuario-bioo">
-            <div className="lista-topo">
-              <h3>Adicionar projeto</h3>
-              <span className="mdi mdi-close close" onClick={() => handleCloseModalProject()}><AiOutlineClose/></span>
-            </div>
-            <form className="lista-datoss" onSubmit={handleSubmit(SubmitProject)}>
-              <label>Nome do projeto</label>
-              <input
-                type="text"
-                placeholder="Insira o título do projeto"
-                className={errors?.pro_title && 'input-error'}
-                {...register('pro_title', {required: true, minLength: 4})}
-                onChange={handleChangeProject}
-              />
-              {errors?.pro_title?.type === 'required' && <p className="form_error_message">Insira um nome para o projeto!</p>}
-              {errors?.pro_title?.type === 'minLength' && <p className="form_error_message">O nome do projeto precisa conter no mínimo 4 caracteres</p>}
-
-              <div className='space'></div>
-              <label>Descrição do projeto</label>
-              <input
-                type="text"
-                placeholder="Insira a descrição do projeto"
-                className={errors?.pro_description && 'input-error'}
-                {...register('pro_description', {required: true, minLength: 10})}
-                onChange={handleChangeProject}
-              />
-              {errors?.pro_description?.type === 'required' && <p className="form_error_message">Insira uma descrição para o projeto!</p>}
-              {errors?.pro_description?.type === 'minLength' && <p className="form_error_message">A descrição do projeto precisa conter no mínimo 10 caracteres</p>}
-
-              <ul className="lista-datoss1">
-                <p onClick={handleCloseModalProject}>Cancelar</p>
-                <button type="submit" disabled={!isValid}>Adicionar projeto</button>
-              </ul>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {showModalFrame && (
-        <div className="modal">
-          <div className="perfil-usuario-bioo">
-            <div className="lista-topo">
-              <h3>Adicionar quadro</h3>
-              <span className="mdi mdi-close close" onClick={() => handleCloseModalFrame()}><AiOutlineClose/></span>
-            </div>
-
-            <form className="lista-datoss" onSubmit={handleSubmit(SubmitFrame)}>
-              <label>Nome do quadro</label>
-              <input
-                type="text"
-                placeholder="Insira o título do quadro"
-                className={errors?.fra_title && 'input-error'}
-                {...register('fra_title', {required: true, minLength: 4})}
-                onChange={handleChangeFrame}
-              />
-              {errors?.fra_title?.type === 'required' && <p className="form_error_message">Insira um nome para o quadro!</p>}
-              {errors?.fra_title?.type === 'minLength' && <p className="form_error_message">O nome do quadro precisa conter no mínimo 4 caracteres</p>}
-
-              <div className='space'></div>
-              <label>Descrição do quadro</label>
-              <input
-                type="text"
-                placeholder="Insira a descrição do quadro"
-                className={errors?.fra_description && 'input-error'}
-                {...register('fra_description', {required: true, minLength: 10})}
-                onChange={handleChangeFrame}
-              />
-              {errors?.fra_description?.type === 'required' && <p className="form_error_message">Insira uma descrição para o quadro!</p>}
-              {errors?.fra_description?.type === 'minLength' && <p className="form_error_message">A descrição do quadro precisa conter no mínimo 10 caracteres</p>}
-
-              <ul className="lista-datoss1">
-                <p onClick={handleCloseModalFrame}>Cancelar</p>
-                <button type="submit" disabled={!isValid}>Adicionar quadro</button>
-              </ul>
-            </form>
-
-          </div>
-        </div>
-      )}
-
-      {showModalFrameUpdate && (
-        <div className="modal">
-          <div className="perfil-usuario-bioo">
-            <div className="lista-topo">
-              <h3>Editar quadro</h3>
-              <span className="mdi mdi-close close" onClick={() => handleCloseModalFrameUpdate()}><AiOutlineClose/></span>
-            </div>
-
-            <form className="lista-datoss" onSubmit={handleSubmit(SubmitUpdateFrame)}>
-              <label>Nome do quadro</label>
-              <input
-                type="text"
-                placeholder="Insira o título do quadro"
-                value={inputUpdateFrame.fra_titleUpdated}
-                className={errors?.fra_titleUpdated && 'input-error'}
-                {...register('fra_titleUpdated', {required: true, minLength: 4})}
-                onChange={handleChangeUpdateFrame}
-              />
-              {errors?.fra_titleUpdated?.type === 'required' && <p className="form_error_message">Insira um nome para quadro!</p>}
-              {errors?.fra_titleUpdated?.type === 'minLength' && <p className="form_error_message">O nome do quadro precisa conter no mínimo 4 caracteres</p>}
-
-              <div className='space'></div>
-              <label>Descrição do quadro</label>
-              <input
-                type="text"
-                placeholder="Insira a descrição do quadro"
-                value={inputUpdateFrame.fra_descriptionUpdated}
-                className={errors?.des_descriptionUpdated && 'input-error'}
-                {...register('fra_descriptionUpdated', {required: true, minLength: 10})}
-                onChange={handleChangeUpdateFrame}
-              />
-              {errors?.fra_descriptionUpdated?.type === 'required' && <p className="form_error_message">Insira uma descrição para o quadro!</p>}
-              {errors?.fra_descriptionUpdated?.type === 'minLength' && <p className="form_error_message">A descrição do quadro precisa conter no mínimo 10 caracteres</p>}
-
-              <ul className="lista-datoss1">
-                <p onClick={() => handleCloseModalFrameUpdate()}>Cancelar</p>
-                <button type="submit" disabled={!isValid}>Editar quadro</button>
-              </ul>
-            </form>
-
-          </div>
-        </div>
-      )}
-      
-      {showModalFrameDelete && (
-        <div className="modal">
-          <div className="perfil-usuario-bioo">
-            <div className="lista-topo">
-              <h3>Excluir quadro</h3>
-              <span className="mdi mdi-close close" onClick={() => setShowModalFrameDelete(false)}><AiOutlineClose/></span>
-            </div>
-
-            <form className="lista-datoss" onSubmit={handleSubmit(SubmitDeleteFrame)}>
-              <label>Tem certeza que deseja excluir o quadro?</label>
-              <ul className="lista-datoss1">
-                <p onClick={() => setShowModalFrameDelete(false)}>Cancelar</p>
-                <button type="submit">Excluir quadro</button>
-              </ul>
-            </form>
-
-          </div>
-        </div>
-      )}
-
-      {showModalCreateTable && (
-        <div className="modal">
-          <div className="perfil-usuario-bioo">
-            <div className="lista-topo">
-              <h3>Adicionar tabela</h3>
-              <span className="mdi mdi-close close" onClick={() => handleCloseModalTableCreate()}><AiOutlineClose/></span>
-            </div>
-
-            <form className="lista-datoss" onSubmit={handleSubmit(SubmitTable)}>
-              <label>Nome da tabela</label>
-              <input
-                type="text"
-                placeholder="Insira o título da tabela"
-                className={errors?.kat_title && 'input-error'}
-                {...register('kat_title', {required: true, minLength: 4})}
-                onChange={handleChangeCreateTable}
-              />
-              {errors?.kat_title?.type === 'required' && <p className="form_error_message">Insira um nome para a tabela!</p>}
-              {errors?.kat_title?.type === 'minLength' && <p className="form_error_message">O nome da tabela precisa conter no mínimo 4 caracteres</p>}
-
-              <div className='space'></div>
-              <label>Descrição da tabela</label>
-              <input
-                type="text"
-                placeholder="Insira a descrição da tabela"
-                className={errors?.kat_description && 'input-error'}
-                {...register('kat_description', {required: true, minLength: 10})}
-                onChange={handleChangeCreateTable}
-              />
-              {errors?.kat_description?.type === 'required' && <p className="form_error_message">Insira uma descrição para a tabela!</p>}
-              {errors?.kat_description?.type === 'minLength' && <p className="form_error_message">A descrição da tabela precisa conter no mínimo 10 caracteres</p>}
-
-              <ul className="lista-datoss1">
-                <p onClick={handleCloseModalTableCreate}>Cancelar</p>
-                <button type="submit" disabled={!isValid}>Adicionar tabela</button>
-              </ul>
-            </form>
-
-          </div>
-        </div>
-      )}
-
     </div>
-  );
-};
+  )
+}
 
 export default Project

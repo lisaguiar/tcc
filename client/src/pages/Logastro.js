@@ -46,7 +46,7 @@ const Logastro = () => {
         setInputsLogin(prev => ({...prev, [e.target.name]: e.target.value}))  
     }
 
-    const handleSubmitRegister = async (data) => {
+    const handleSubmitRegister = async () => {
         try {   
             const res = await axios.post("/api/register", inputsRegister)
             console.log(res.data)  
@@ -56,7 +56,7 @@ const Logastro = () => {
         }
     }
 
-    const handleSubmitLogin = async (data) => {
+    const handleSubmitLogin = async () => {
         try {   
             await login(inputsLogin)
             navigate('/desktop')

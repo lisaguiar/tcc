@@ -33,7 +33,7 @@ export const getKanbanCard = (req, res) => {
 }
 
 export const postTable = (req, res) => {
-    const q = "INSERT INTO kat_kanbanTable (kat_title, kat_description, kat_state, kat_createdAt, kat_position, uda_id, fra_id) VALUES (?)"
+    const q = "INSERT INTO kat_kanbanTable (kat_title, kat_description, kat_state, kat_createdAt, kat_position, uda_id, fra_id, col_id) VALUES (?)"
 
     const values = [
         req.body.kat_title,
@@ -42,7 +42,8 @@ export const postTable = (req, res) => {
         req.body.kat_createdAt,
         req.body.kat_position,
         req.params.uda_id,
-        req.params.fra_id
+        req.params.fra_id,
+        req.body.col_id
     ]
 
     db.query(q, [values], (err, data) => {
@@ -136,8 +137,6 @@ export const deleteTable = (req, res) => {
     const q = "UPDATE kat_kanbanTable SET kat_state = 'disabled' WHERE kat_id = ?"
   
     const kat_id = req.params.kat_id
-
-    console.log(kat_id)
   
     db.query(q, kat_id, (err) => {
         if (err) {
