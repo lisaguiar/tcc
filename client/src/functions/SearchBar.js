@@ -129,7 +129,6 @@ function SearchBar() {
                 {var_map.length > 0 && var_map
                     .filter(item => item[var_filter] === var_value)
                     .map((item) => {
-                        console.log("oiiiii")
                         const firstLetter = item[var_title].charAt(0).toUpperCase()
                         return (
                             <>

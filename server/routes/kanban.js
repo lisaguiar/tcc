@@ -1,5 +1,5 @@
 import express from 'express'
-import { getKanbanTable, getKanbanCard, patchPositionCard, patchCard, postTable, patchTable, deleteCard, deleteTable } from '../controllers/kanban.js'
+import { getKanbanTable, getKanbanCard, patchPositionCard, patchCard, postTable, patchTable, deleteCard, deleteTable, postCard } from '../controllers/kanban.js'
 
 const router = express.Router()
 
@@ -11,5 +11,6 @@ router.patch('/card/patch/:kac_id', patchCard)
 router.patch('/table/patch/:kat_id', patchTable)
 router.patch('/card/delete/:kac_id', deleteCard)
 router.patch('/table/delete/:kat_id', deleteTable)
+router.post('/card/:uda_id/:kat_id', postCard)
 
 export default router

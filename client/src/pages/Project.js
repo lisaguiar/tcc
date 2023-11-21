@@ -60,7 +60,6 @@ const Project = () => {
 
   const handleChange = (updatedFunction, fieldName, e) => {
     updatedFunction((prev) => ({...prev, [fieldName]: e.target.value}))
-    console.log(fieldName)
   }
 
   const handleSubmitDeleteTable = async (values) => {
@@ -118,7 +117,6 @@ const SubmitDeleteTable = async (kat_id) => {
           console.log('Posição e endereço do cartão atualizados no banco de dados')
         })
         .catch((error) => {
-          console.log(error)
           setErr(error.response.data)
         })
     }
@@ -152,16 +150,24 @@ const SubmitDeleteTable = async (kat_id) => {
           >
             <div className="column-container">
               <h4>{nome}</h4>
-              <AiOutlineClose className="delete-table" onClick={() => handleSubmitDeleteTable(katId)}/>
+              <AiOutlineClose className="delete-table" onClick={() => {
+              /*handleSubmitDeleteTable(katId)*/ 
+              setInputOperation("create")
+              setInputType("cartão")
+              setInputItem(katId)
+              setOpenModal(true)
+              }
+              }/>
+
             </div>
             <div className="itens-container">
               {kanbanCards &&
                 kanbanCards.map((card, index) => (
                   <Card
                     key={card.kac_id}
-                    title={card.kac_title}
+                    card={card}
                     index={index}
-                    kacId={card.kac_id}
+                    katId={katId}
                   />
                 ))}
               {provided.placeholder}
@@ -172,17 +178,24 @@ const SubmitDeleteTable = async (kat_id) => {
     )
   }
   
-  function Card({ title, index, kacId }) {
+  function Card({ key, index, card }) {
     return (
-      <Draggable draggableId={kacId.toString()} index={index}>
+      <Draggable draggableId={card.kac_id.toString()} index={index}>
         {(provided) => (
-          <div
+          <div key={card.kac_id}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
             className="item-container"
+
+            onClick={() => {
+              setInputOperation("update")
+              setInputType("cartão")
+              setInputItem(card)
+              setOpenModal(true)
+            }}
           >
-            <p>{title}</p>
+            <p>{card.kac_title}</p>
           </div>
         )}
       </Draggable>
@@ -213,10 +226,6 @@ const SubmitDeleteTable = async (kat_id) => {
       setModId(frame.mod_id)
       navigate(`/desktop/${des_id}/project/${pro_id}/frame/${frame.fra_id}`)
     }
-
-
-
-  console.log(frameId)
 
   const getProjects = useCallback(async () => {
     try {
@@ -272,7 +281,6 @@ const SubmitDeleteTable = async (kat_id) => {
   }, [pro_id, frameId])
 
   const getKanbanTable = useCallback(async () => {
-    console.log(frameId)
     try {
       const res = await axios.get(`/api/kanban/table/${fra_id}`)
       setKanbanTable(res.data)
@@ -504,8 +512,6 @@ const SubmitDeleteTable = async (kat_id) => {
           <div className="quadro-map">
 
             {openModal ? <Modal type={inputType} operation={inputOperation} modal={openModal} input={inputItem} openChange={handleOpenModal}/> : null}
-
-            {console.log(inputType + " " + inputOperation + " " + openModal)}
 
             {valid && frames.map((frame) => {
               return (

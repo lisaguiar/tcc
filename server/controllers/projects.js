@@ -2,7 +2,7 @@ import { db } from "../config/config.js"
 
 const state = "active"
 
-export const getAllProjects = (req, res) => {
+export const getProjects = (req, res) => {
     const q = "SELECT * FROM pro_projects WHERE des_id = ? AND pro_state = 'active'"
 
     const values = [
@@ -31,22 +31,6 @@ export const getAllProjects = (req, res) => {
         } else {
             return res.status(200).json(data)
         }
-    })
-}
-
-export const getProject = (req, res) => {
-    const q = "SELECT * FROM pro_projects WHERE pro_id = ? AND pro_state = 'active' AND des_id = ?"
-
-    const values = [
-        req.params.pro_id,
-        req.params.des_id
-    ]
-
-    db.query(q, values, (err, data) => {
-        if (err) {
-            return res.status(500).json(err)
-        } 
-        return res.status(200).json(data)
     })
 }
 

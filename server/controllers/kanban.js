@@ -1,4 +1,5 @@
 import { db } from "../config/config.js"
+import moment from "moment"
 
 const state = "active"
 
@@ -18,7 +19,7 @@ export const getKanbanTable = (req, res) => {
 }
 
 export const getKanbanCard = (req, res) => {
-    const q = "SELECT a.*, b.* FROM kac_kanbanCard a JOIN kat_kanbanTable b WHERE a.kat_id = b.kat_id AND kac_state = 'active' AND b.fra_id = ?"
+    const q = "SELECT a.*, b.kat_id, b.kat_position FROM kac_kanbanCard a JOIN kat_kanbanTable b WHERE a.kat_id = b.kat_id AND kac_state = 'active' AND b.fra_id = ?"
 
     const values = [
         req.params.fra_id
@@ -76,24 +77,28 @@ export const patchPositionCard = (req, res) => {
 }
 
 export const patchCard = (req, res) => {
-    const q = "UPDATE kac_kanbanCard SET kac_title = ?, kac_content = ? WHERE kac_id = ?"
+    const q = "UPDATE kac_kanbanCard SET kac_title = ?, kac_content = ?, kac_deadline = ?, pri_id = ? WHERE kac_id = ?"
   
-    const { kac_title, kac_description, kac_content } = req.body
-    const kac_id = req.params.kac_id
-  
+    const formattedDate =  moment(req.body.kac_deadline).format("YYYY-MM-DD HH:mm:ss")
+
     const values = [
-      kac_title,
-      kac_description,
-      kac_content,
-      kac_id
+      req.body.kac_title,
+      req.body.kac_content,
+      formattedDate,
+      req.body.pri_id,
+      req.params.kac_id
     ]
+
+    console.log(values)
   
     db.query(q, values, (err) => {
         if (err) {
+            console.log(err)
             return res.status(500).json("Houve um erro ao atualizar o cartão")
         }
         req.io.emit("kanbanUpdated")
-        return res.status(200)
+        console.log("funcionou")
+        return res.status(200).json("joga mt")
     })
 }
 
@@ -147,3 +152,30 @@ export const deleteTable = (req, res) => {
     })
 }
 
+export const postCard = (req, res) => {
+    const q = "INSERT INTO kac_kanbanCard (kac_title, kac_content, kac_deadline, kac_state, kac_position, kac_createdAt, col_id, pri_id, uda_id, kat_id) VALUES (?)"
+
+    const values = [
+        req.body.kac_title,
+        req.body.kac_content,
+        req.body.kac_deadline,
+        state,
+        req.body.kac_position,
+        req.body.kac_createdAt,
+        req.body.col_id,
+        req.body.pri_id,
+        req.params.uda_id,
+        req.params.kat_id
+    ]
+
+    console.log("valor: " + values)
+    
+    db.query(q, [values], (err) => {
+        if (err) {
+            console.log(err)
+            return res.status(500).json("Houve um erro ao criar o cartão")
+        }
+        req.io.emit("kanbanUpdated")
+        return res.status(200).json("Cartão criado com sucesso!")
+    })
+}

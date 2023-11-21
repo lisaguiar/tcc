@@ -65,9 +65,9 @@ export const postFrame = (req, res) => {
             return res.status(500).json("Houve um erro ao cadastrar o quadro!")
         }
 
-        req.io.emit('frameCreated')
+        req.io.emit('frameCreated', { frameId: data.insertId })
 
-        return res.status(200).json("Quadro criado com sucesso!")
+        return res.status(200).json(data.insertId)
     })
 }
 
