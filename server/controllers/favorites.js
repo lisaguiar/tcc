@@ -11,7 +11,7 @@ export const getFavorites = (req, res) => {
 
     db.query(q, values, (err, data) => {
         if (err) {
-            return res.status(500).json({ error: "Error fetching favorites" })
+            return res.status(500).json({ error: "Houve um erro ao procurar os favoritos." })
         }
         return res.status(200).json(data)
     })
@@ -25,11 +25,12 @@ export const addFavorite = (req, res) => {
         req.params.fra_id
     ]
 
-    db.query(q, values, (err) => {
+    db.query(q, values, (err, data) => {
         if (err) {
-            return res.status(500).json({ error: "Error adding favorite" })
+            return res.status(500).json({ error: "Houve um erro ao adicionar favorito." })
         }
-        return res.status(201).json({ message: "Favorite added successfully" })
+        req.io.emit("favoriteCreated", { userId: req.params.uda_id })
+        return res.status(201).json({ message: "Favoritado com sucesso." })
     })
 }
 
@@ -42,13 +43,13 @@ export const deleteFavorite = (req, res) => {
 
     db.query(q, values, (err, result) => {
         if (err) {
-            return res.status(500).json({ error: "Error updating favorite" })
+            return res.status(500).json({ error: "Houve um erro ao desfavoritar quadro." })
         }
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({ error: "Favorite not found" })
+            return res.status(404).json({ error: "Quadro favoritado não encontrado" })
         }
 
-        return res.status(200).json({ message: "Favorite updated successfully" })
+        return res.status(200).json({ message: "Quadro desfavoritado com sucesso." })
     })
 }

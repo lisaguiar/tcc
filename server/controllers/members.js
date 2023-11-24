@@ -1,4 +1,4 @@
-import { db } from "../config/config"
+import { db } from "../config/config.js"
 
 const state = 'active'
 
@@ -17,12 +17,13 @@ export const postMember = (req, res) => {
         if (err) {
             return res.status(500).json({ error: "Error adding member" })
         }
+        req.io.emit("memberPosted", { desktopId: req.params.des_id} )
         return res.status(201).json({ message: "Member added successfully" })
     })
 }
 
 export const getMember = (req, res) => {
-    const q = "SELECT * FROM uda_userDesktop WHERE uda_id = ? AND usa_state = 'active'"
+    const q = "SELECT * FROM uda_userDesktop WHERE uda_id = ? AND uda_state = 'active'"
 
     const values = [
         req.params.uda_id
@@ -48,6 +49,7 @@ export const patchMember = (req, res) => {
         if (err) {
             return res.status(500).json({ error: "Error patching member" })
         }
+        req.io.emit("memberUpdated", { desktopId: req.params.des_id} )
         return res.status(201).json({ message: "Member patched successfully" })
     })
 }
@@ -63,6 +65,7 @@ export const deleteMember = (req, res) => {
         if (err) {
             return res.status(500).json({ error: "Error excluding member" })
         }
+        req.io.emit("memberDeleted", { desktopId: req.params.des_id} )
         return res.status(201).json({ message: "Member deleted successfully" })
     })
 }

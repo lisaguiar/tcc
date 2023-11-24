@@ -1,12 +1,11 @@
 import express from 'express'
-import { deleteFrame, getAllFrames, getFrame, patchFrame, postFrame } from '../controllers/frames.js'
+import { deleteFrame, getFrames, patchFrame, postFrame } from '../controllers/frames.js'
 
 const router = express.Router()
 
-router.get('/all/:pro_id', getAllFrames)
-router.get('/one/:pro_id/:fra_id', getFrame)
-router.post('/post/:uda_id/:pro_id', postFrame)
-router.patch('/patch/:fra_id', patchFrame)
-router.patch('/delete/:fra_id', deleteFrame)
+router.get('/:pro_id/:fra_id', getFrames)
+router.post('/:pro_id/:uda_id/', postFrame)
+router.patch('/patch/:pro_id/:fra_id', patchFrame)
+router.patch('/delete/:pro_id/:fra_id', deleteFrame)
 
 export default router

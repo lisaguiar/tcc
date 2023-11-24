@@ -3,9 +3,9 @@ import { getProjects, postProject, deleteProject, patchProject } from '../contro
 
 const router = express.Router()
 
-router.get('/all/:des_id/:pro_id', getProjects)
-router.post('/post/:uda_id/:des_id', postProject)
-router.patch('/patch/:pro_id', patchProject)
-router.patch('/delete/:pro_id', deleteProject)
+router.get('/:des_id/:pro_id', getProjects)
+router.post('/:des_id/:uda_id', postProject)
+router.patch('/patch/:des_id/:pro_id', patchProject)
+router.patch('/delete/:des_id/:pro_id', deleteProject)
 
 export default router

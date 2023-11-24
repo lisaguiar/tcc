@@ -5,7 +5,7 @@ export const getPriority = (req, res) => {
 
     db.query(q, (err, data) => {
         if (err) {
-            return res.status(500).json("Houve um erro ao definir as prioridades")
+            return res.status(500).json({ error: "Houve um erro ao definir as prioridades" })
         }
         return res.status(200).json(data)
     })

@@ -5,12 +5,12 @@ const router = express.Router()
 
 router.get('/table/:fra_id', getKanbanTable)
 router.get('/card/:fra_id', getKanbanCard)
-router.post('/table/:uda_id/:fra_id', postTable)
+router.post('/table/:fra_id/:uda_id', postTable)
+router.post('/card/:fra_id/:uda_id/:kat_id', postCard)
 router.patch('/card', patchPositionCard)
-router.patch('/card/patch/:kac_id', patchCard)
-router.patch('/table/patch/:kat_id', patchTable)
-router.patch('/card/delete/:kac_id', deleteCard)
-router.patch('/table/delete/:kat_id', deleteTable)
-router.post('/card/:uda_id/:kat_id', postCard)
+router.patch('/card/patch/:fra_id/:kac_id', patchCard)
+router.patch('/table/patch/:fra_id/:kat_id', patchTable)
+router.patch('/card/delete/:fra_id/:kac_id', deleteCard)
+router.patch('/table/delete/:fra_id/:kat_id', deleteTable)
 
 export default router

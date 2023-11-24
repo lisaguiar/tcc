@@ -56,6 +56,7 @@ function Modal (props) {
     })
 
     const [priorities, setPriorities] = useState("")
+    const [models, setModels] = useState("")
     const [members, setMembers] = useState("")
     
     const handleClose = () => {
@@ -66,7 +67,7 @@ function Modal (props) {
         switch (props.operation) {
             case "create":
                 try {
-                    const res = await axios.post(`/api/projects/post/${uda_id}/${des_id}`, getValues())
+                    const res = await axios.post(`/api/projects/post/${des_id}/${uda_id}`, getValues())
                     navigate(`/desktop/${des_id}/project/${res.data}`)
                 } catch (err) {
                     setErr(err.response.data)
@@ -74,7 +75,7 @@ function Modal (props) {
             break
             case "delete":
                 try {
-                    await axios.patch(`/api/projects/delete/${props.input[0].pro_id}`)
+                    await axios.patch(`/api/projects/delete/${des_id}/${props.input[0].pro_id}`)
                     window.location.reload()
                 } catch (err) {
                     setErr(err.response.data)
@@ -83,7 +84,7 @@ function Modal (props) {
             case "update":
                 const data = getValues()
                 try {
-                    await axios.patch(`api/projects/patch/${props.input[0].pro_id}`, data)
+                    await axios.patch(`api/projects/patch/${des_id}/${props.input[0].pro_id}`, data)
                 } catch (err) {
                     setErr(err.response.data)
                 }
@@ -96,7 +97,7 @@ function Modal (props) {
         switch (props.operation) {
             case "create":
                 try {
-                    const res = await axios.post(`/api/frames/post/${uda_id}/${pro_id}`, inputFrame)
+                    const res = await axios.post(`/api/frames/${pro_id}/${uda_id}`, getValues())
                     navigate(`/desktop/${des_id}/project/${pro_id}/frame/${res.data}`)
                 } catch (err) {
                     setErr(err.response.data)
@@ -104,7 +105,7 @@ function Modal (props) {
             break
             case "delete":
                 try {
-                    const res = await axios.patch(`/api/frames/delete/${props.input[0].fra_id}`)
+                    const res = await axios.patch(`/api/frames/delete/${pro_id}/${props.input[0].fra_id}`)
                     setErr(res.data)
                 } catch (err) {
                     setErr(err.response.data)
@@ -112,7 +113,7 @@ function Modal (props) {
             break
             case "update":
                 try {
-                    await axios.patch(`/api/frames/patch/${props.input[0].fra_id}`, inputFrame)
+                    await axios.patch(`/api/frames/patch/${pro_id}/${props.input[0].fra_id}`, inputFrame)
                 } catch (err) {
                     setErr(err.response.data)
                 }
@@ -233,9 +234,9 @@ function Modal (props) {
     }
 
     const varCreatedAtMapping = {
+        "quadro" : "fra_createdAt",
         "cartão" : "kac_createdAt",
         "projeto" : "pro_createdAt"
-
     }
 
     const operation = operationMapping[props.operation] 
@@ -280,14 +281,24 @@ function Modal (props) {
         }
         const getPriority = async () => {
             try {
-                const res = await axios.get(`/api/priority/`)
+                const res = await axios.get(`/api/priority`)
                 setPriorities(res.data)
             } catch (err) {
                 setErr(err.response.data)
             }
         }
+        const getModels = async () => {
+            try {
+                const res = await axios.get(`/api/models`)
+                console.log(res.data)
+                setModels(res.data)
+            } catch (err) {
+                setErr(err.responde.data)
+            }
+        }
 
         getPriority()
+        getModels()
         renderValue()
     }, [props.operation, props.input, varHandle, setValue])
 
@@ -342,11 +353,41 @@ function Modal (props) {
                 {errors?.[varDescription]?.type === 'minLength' && <p className="form_error_message">A descrição d{type} precisa conter no mínimo 10 caracteres</p>}
 
                 {renderKanban()}
+                {renderFrame()}
                 <ul className="lista-datoss1">
                     <p onClick={() => handleClose()}>Cancelar</p>
                     <button type="submit">{operation} {props.type}</button>
                 </ul>
             </div>
+            )
+        }
+    }
+
+    const renderFrame = () => {
+        if (props.type === "quadro") {
+            return (
+                <>
+                <div className="space"/>
+                <label>Modelo</label>
+
+                {models ?
+                        <> 
+                            <select 
+                            {...register('mod_id', {required: true})}
+                            onChange={handleChange}
+                        >
+                                {models.map((model) => {
+                                    return (
+                                        <option key={model.mod_id} value={parseInt(model.mod_id)}>
+                                            {model.mod_type}
+                                        </option>
+                                    )
+                                })}
+                            </select>
+                            {errors?.mod_id?.type === 'required' && <p className="form_error_message">Insira um modelo para {type}!</p>}
+                        </>
+                    : ""}
+                </>
             )
         }
     }

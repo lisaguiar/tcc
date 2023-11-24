@@ -1,9 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import '../styles/Workspace.css'
-import { GrConfigure } from 'react-icons/gr'
 import axios from '../api/axios'
 import { AuthContext } from '../contexts/authContext'
-import house from '../images/house.png'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { Logado } from '../components/IsLogged'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
@@ -12,8 +10,6 @@ import { io } from 'socket.io-client'
 import { AiFillDelete, AiOutlineClose, AiOutlineEdit, AiOutlineUsergroupAdd } from 'react-icons/ai'
 import ErrorDisplay from '../functions/HandleError'
 import { RiInboxLine, RiLayoutBottom2Line, RiMore2Fill } from 'react-icons/ri'
-import { useForm } from 'react-hook-form'
-import moment from 'moment'
 import SearchBar from '../functions/SearchBar'
 import Modal from '../functions/Modal'
 
@@ -24,26 +20,11 @@ const Project = () => {
   const [inputOperation, setInputOperation] = useState("")
   const [inputItem, setInputItem] = useState("")
 
-  const {register, formState: {errors}, handleSubmit} = useForm({
-    mode: "all"
-  })
-
   const navigate = useNavigate()
 
-  const [valid, setValid] = useState(true)
-  const [query, setQuery] = useState("")
-  const [count, setCount] = useState(true)
-
-  const [lastDesktop, setLastDesktop] = useState([])
-  const [project, setProject] = useState([])
   const [projects, setProjects] = useState([])
-  const [countProject, setCountProject] = useState(false)
 
-  const [countFrames, setCountFrames] = useState(false)
   const [frames, setFrames] = useState([])
-  const [frame, setFrame] = useState([])
-
-  const [modId, setModId] = useState("")
 
   const [kanbanTable, setKanbanTable] = useState([])
   const [kanbanCards, setKanbanCards] = useState([])
@@ -53,44 +34,20 @@ const Project = () => {
   const uda_id = currentUser?.uda_id
   const use_id = currentUser?.use_id
   const last_id = currentUser?.use_lastDesktop
-  const createdAt = moment(Date.now()).format("YYYY-MM-DD HH:mm:ss")
 
   const [err, setErr] = useState("")
-  const [frameId, setFrameId] = useState("")
-
-  const handleChange = (updatedFunction, fieldName, e) => {
-    updatedFunction((prev) => ({...prev, [fieldName]: e.target.value}))
-  }
-
-  const handleSubmitDeleteTable = async (values) => {
-    const kat_id = values
-
-    await SubmitDeleteTable(kat_id)
-}
-const SubmitDeleteTable = async (kat_id) => {
-  try {
-      const res = await axios.patch(`/api/kanban/table/delete/${kat_id}`)
-      setErr(res.data)
-  } catch (err) {
-      setErr(err.response.data)
-  }
-  //setShowModalDeleteTable(false)
-}
 
   const location = useLocation()
   const des_id = location.pathname.split("/")[2]
   const pro_id = location.pathname.split("/")[4]
   const fra_id = location.pathname.split("/")[6]
 
-  const handleFrameId = () => {
-    setFrameId(location.pathname.split("/")[6])
-  }
 
   const handleOpenModal = (value) => {
     setOpenModal(value)
   }
 
-  function RenderKanban({ frame }) {
+  function RenderKanban() {
 
     const handleDragEnd = (result) => {
       const { destination, source, draggableId } = result
@@ -127,7 +84,7 @@ const SubmitDeleteTable = async (kat_id) => {
           {kanbanTable &&
             kanbanTable.map((table) => (
               <ColumnList
-                key={table.kat_id}
+                keys={table.kat_id}
                 nome={table.kat_title}
                 katId={table.kat_id}
                 kanbanCards={kanbanCards.filter((card) => card.kat_id === table.kat_id)}
@@ -139,11 +96,12 @@ const SubmitDeleteTable = async (kat_id) => {
     )
   }
   
-  function ColumnList({ nome, katId, kanbanCards }) {
+  function ColumnList({ keys, nome, katId, kanbanCards }) {
     return (
-      <Droppable droppableId={katId.toString()}>
+      <Droppable droppableId={katId.toString()} key={keys}>
         {(provided) => (
           <div
+            key={keys}
             {...provided.droppableProps}
             ref={provided.innerRef}
             className="kanban-container"
@@ -164,7 +122,7 @@ const SubmitDeleteTable = async (kat_id) => {
               {kanbanCards &&
                 kanbanCards.map((card, index) => (
                   <Card
-                    key={card.kac_id}
+                    keys={card.kac_id}
                     card={card}
                     index={index}
                     katId={katId}
@@ -178,11 +136,11 @@ const SubmitDeleteTable = async (kat_id) => {
     )
   }
   
-  function Card({ key, index, card }) {
+  function Card({ keys, index, card }) {
     return (
-      <Draggable draggableId={card.kac_id.toString()} index={index}>
+      <Draggable draggableId={card.kac_id.toString()} index={index} key={keys}>
         {(provided) => (
-          <div key={card.kac_id}
+          <div key={keys}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
@@ -202,7 +160,6 @@ const SubmitDeleteTable = async (kat_id) => {
     )
   }
   
-
   function RenderNotes(frame) {
     return (
       <>
@@ -223,204 +180,163 @@ const SubmitDeleteTable = async (kat_id) => {
   let isOnline = true
 
   const handleFrame = async (frame) => {
-      setModId(frame.mod_id)
       navigate(`/desktop/${des_id}/project/${pro_id}/frame/${frame.fra_id}`)
     }
 
   const getProjects = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/projects/all/${des_id}/${pro_id}?q=${query}`)
+      const res = await axios.get(`/api/projects/${des_id}/${pro_id}`)
       setProjects(res.data)
-      if (res.data.length === 0) {
-        setCount(false)
-      } else {
-        setCount(true)
-      }
     } catch (err) {
       setErr(err.data)
     }
-  }, [des_id, query])
-
-  const getProject = useCallback(async () => {
-    try {
-      const res = await axios.get(`/api/projects/one/${pro_id}/${des_id}`)
-      setProject(res.data)
-
-      if (res.data.length === 0 || !res.data.length) {
-        setValid(false)
-      } else {
-        setValid(true)
-      }
-    } catch (err) {
-      setErr(err.data)
-    }
-  }, [pro_id, last_id])
+  }, [des_id, pro_id])
 
   const getFrames = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/frames/all/${pro_id}`)
+      const res = await axios.get(`/api/frames/${pro_id}/${fra_id}`)
+      console.log(res.data)
       setFrames(res.data)
-        if (res.data.length === 0 || !res.data.length) {
-          setCountFrames(false)
-        } else {
-          setCountFrames(true)
-          
-        }
     } catch (err) {
       setErr(err.data)
     }
-  }, [pro_id])
-
-  const getFrame = useCallback(async () => {
-    try {
-      const res = await axios.get(`/api/frames/one/${pro_id}/${fra_id}`)
-      setFrame(res.data)
-    } catch (err) {
-      setErr(err.data)
-    }
-  }, [pro_id, frameId])
+  }, [pro_id, fra_id])
 
   const getKanbanTable = useCallback(async () => {
     try {
       const res = await axios.get(`/api/kanban/table/${fra_id}`)
       setKanbanTable(res.data)
-   
     } catch (err) {
       setErr(err.data)
     }
-  }, [frameId])
+  }, [fra_id])
 
   const getKanbanCards = useCallback(async () => {
     try {
       const res = await axios.get(`/api/kanban/card/${fra_id}`)
       setKanbanCards(res.data)
-      
     } catch (err) {
       setErr(err.data)
     }
-  }, [frameId])
+  }, [fra_id])
 
-  const validateFrameModId = useCallback(() => {
+  /*const validateFrameModId = useCallback(() => {
     if (frame && frame.length !== 0) {
       setModId(frame[0].mod_id)
     }
-  }, [frame])
+  }, [frame])*/
 
+  const getPermission = useCallback(async () => {
+    try {
+      const res = await checkUserPermission(des_id)
+      if (!res) {
+        window.location.replace('/desktop')
+      }
+    } catch (err) {
+      setErr(err.data)
+    }
+  }, [checkUserPermission, des_id])
 
   useEffect(() => {
-    // Inicialização do socket
-    const socket = io('http://localhost:8001');
-  
+    if (isOnline) {
+      const socket = io('http://localhost:8001')
+      getPermission()
+      getProjects()
+      getFrames()
+
+      console.log("frame: " + fra_id)
+      console.log("frames length: " + frames.length)
+      console.log(frames)
+      
     socket.on('connect', () => {
-      console.log('Conectado ao servidor do Socket.io');
-    });
+      console.log('Conectado ao servidor do Socket.io')
+    })
   
     socket.on('disconnect', () => {
-      console.log('Desconectado do servidor do Socket.io');
-    });
-  
+      console.log('Desconectado do servidor do Socket.io')
+    })
+
+    socket.on('projectUpdated', (data) => {
+      getProjects()
+    })
+
+    socket.on('projectDeleted', (data) => {
+      getProjects()
+    })
+
+    socket.on('projectCreated', () => {
+      getProjects()
+    })
+
+    socket.on('frameUpdated', (data) => {
+      if (data.proId = pro_id) {
+        getFrames()
+      }
+    })
+
+    socket.on('frameDeleted', (data) => {
+      if (data.proId === pro_id) {
+        setErr('O quadro foi excluído por um membro!')
+        getFrames()
+      }
+    })
+
+    socket.on('frameCreated', (data) => {
+      if (data.proId === pro_id) {
+        getFrames()
+      }
+    })
+
+    socket.on('kanbanCreated', () => {
+      getKanbanTable()
+      getKanbanCards()
+    })
+
+    socket.on('kanbanUpdated', (data) => {
+      getKanbanTable()
+      getKanbanCards()
+    })
     return () => {
-      socket.disconnect();
-    };
-  }, []);
-  
-  useEffect(() => {
-    // Verifique a permissão do usuário
-    const permission = async () => {
-      try {
-        const res = await checkUserPermission(des_id);
-        if (!res) {
-          window.location.replace('/desktop');
-        }
-      } catch (err) {
-        setErr(err.data);
-      }
-    };
-  
-    if (isOnline) {
-      // Execute ações relacionadas à conexão online
-      permission();
-      getFrames();
-      getProject();
-      getProjects();
-      const socket = io('http://localhost:8001');
-  
-      if (fra_id) {
-        handleFrameId();
-        getFrame();
-      }
-  
-      if (frame) {
-        validateFrameModId();
-  
-        if (modId === 1) {
-          getKanbanTable();
-          getKanbanCards();
-        } else if (modId === 2) {
-          // Lógica para modId igual a 2
-        }
-      }
-  
-      socket.on('projectUpdated', (data) => {
-          getProjects()
-      })
-  
-      socket.on('projectDeleted', (data) => {
-          getProjects()
-      })
-  
-      socket.on('projectCreated', () => {
-        getProjects()
-      });
-  
-      socket.on('frameUpdated', (data) => {
-        getFrame();
-        getFrames();
-      });
-  
-      socket.on('frameDeleted', (data) => {
-        if (data.fra_id === frameId) {
-          setCountFrames(false);
-          setErr('O quadro foi excluído por um membro!');
-        } else {
-          getFrames();
-        }
-      });
-  
-      socket.on('frameCreated', () => {
-        getFrames();
-      });
-  
-      socket.on('kanbanCreated', () => {
-        handleFrame();
-        getKanbanTable();
-        getKanbanCards();
-      });
-  
-      socket.on('kanbanUpdated', (data) => {
-        getKanbanTable();
-        getKanbanCards();
-      });
+      socket.disconnect()
+    } 
     } else {
-      setErr(connectionErr);
+      setErr(connectionErr)
     }
-  }, [use_id, query, last_id, pro_id, des_id, openModal, checkUserPermission, fra_id, frameId, getFrame, getFrames, getProject, getProjects, modId, getKanbanCards, getKanbanTable]);
+  }, [pro_id, getPermission, getFrames, getProjects, getKanbanCards, getKanbanTable, connectionErr, des_id, fra_id, isOnline])
+
+  useEffect(() => {
+    if (fra_id) {
+      if (frames.length > 0) {
+        if (frames.filter(item => item.fra_id === fra_id).filter(item => item.mod_id === 1)) {
+          console.log("oi")
+          getKanbanTable()
+          getKanbanCards()
+        } else if (frames.filter(item => item.mod_id === 2)) {
+          console.log("checklist")
+        } else if (frames.filter(item => item.mod_id === 3)) {
+          console.log("anotações")
+        } else {
+          navigate(`desktop/${des_id}/projects/${pro_id}`)
+        }
+      }
+    }
+  }, [fra_id, frames])
 
   const [DropIsOpen, setDropIsOpen] = useState(false)
 
   function Dropdown () {
-    if (frameId) {
+    if (fra_id) {
       return (
         <div className="prof_dropdown">
-          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); /*handleOpenModalFrameUpdate()*/ }}>
+          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen) /*handleOpenModalFrameUpdate()*/ }}>
             <AiOutlineEdit/>
             <p>Editar Quadro</p>
           </div>
-          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); /*handleOpenModalFrameDelete()*/ }}>
+          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen) /*handleOpenModalFrameDelete()*/ }}>
             <AiFillDelete/>
             <p>Excluir Quadro</p>
           </div>
-          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); /*setShowModalFrame(true)*/ }}>
+          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen) /*setShowModalFrame(true)*/ }}>
             <RiLayoutBottom2Line/>
             <p>Criar Quadro</p>
           </div>
@@ -429,40 +345,38 @@ const SubmitDeleteTable = async (kat_id) => {
     } else {
       return (
         <div className="prof_dropdown">
-          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen);
-             setInputType("projeto")
-             setInputOperation("update")
-             setInputItem(project)
-             setOpenModal(true)
-            
-            
-            /*navigate(`/desktop/${des_id}/project/${pro_id}/edit`)*/}}>
+          <div className="prof_item" onClick={() => {
+            setDropIsOpen(!DropIsOpen)
+            setInputType("projeto")
+            setInputOperation("update")
+            setInputItem(projects.filter(project => project.pro_id === parseInt(pro_id)))
+            setOpenModal(true)
+          }}>
             <AiOutlineEdit/>
             <p>Editar Projeto</p>
           </div>
-          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); 
+          <div className="prof_item" onClick={() => {
+            setDropIsOpen(!DropIsOpen)
             setInputType("projeto")
             setInputOperation("delete")
-            setInputItem(project)
+            setInputItem(projects.filter(project => project.pro_id === parseInt(pro_id)))
             setOpenModal(true)
-            
-            /*navigate(`/desktop/${des_id}/project/${pro_id}/edit`)}*/ }}>
+          }}>
             <AiFillDelete/>
             <p>Excluir Projeto</p>
           </div>
-          <div className="prof_item" onClick={() => {setDropIsOpen(!DropIsOpen); 
+          <div className="prof_item" onClick={() => {
+            setDropIsOpen(!DropIsOpen)
             setInputType("projeto")
             setInputOperation("create")
             setOpenModal(true)
-            
-            /*setShowModalProject(true)*/}}>
+          }}>
             <RiLayoutBottom2Line/>
             <p>Criar projeto</p>
           </div>
         </div>
       )
     }
-    
   }
 
   return (
@@ -472,7 +386,9 @@ const SubmitDeleteTable = async (kat_id) => {
         <SearchBar/>
         <div className="topo">
           <div className="projeto">
-            {!frameId && project && project !== 0 && project.map((project) => {
+            {!fra_id && projects.length > 0 && projects
+            .filter(project => project.pro_id === parseInt(pro_id))
+            .map((project) => {
               return (
                 <div className="projeto-2" key={project.pro_id}>
                    {DropIsOpen && <Dropdown />}
@@ -482,69 +398,56 @@ const SubmitDeleteTable = async (kat_id) => {
 
                   <span className="projeto-icon-edit" onClick={() => setDropIsOpen(!DropIsOpen)}><RiMore2Fill size={20}/></span>
 
-
                   <div className="projeto-description">
                     <p>{project.pro_description}</p>
                     <span className="projeto-edit"><p>Ver mais</p></span>
                   </div>
-                 
                 </div>
               )
             })}
-            
-            {frameId && frame && frame !== 0 && frame.map((frame) => {
-              return (
-                <div className="projeto-2" key={frame.fra_id}>
-                {DropIsOpen && <Dropdown />}
+
+            {fra_id && frames.length > 0 && frames
+              .filter(frame => frame.fra_id === parseInt(fra_id))
+              .map((frame) => { 
+                return (
+                  <div className="projeto-2" key={frame.fra_id}>
+                  {DropIsOpen && <Dropdown />}
                   <div className="projeto-title">
-                   <p>{frame.fra_title}</p>
+                  <p>{frame.fra_title}</p>
                   </div>
                   <span className="projeto-icon-edit" onClick={() => setDropIsOpen(!DropIsOpen)}><RiMore2Fill size={20}/></span>
                   <div className="projeto-description">
                     <p>{frame.fra_description}</p>
                     <span className="projeto-edit" onClick={() => navigate(`/desktop/${des_id}/project/${pro_id}/frame/${frame.fra_id}/edit`)}><p>Ver mais</p></span>
                   </div>
-                 
                 </div>
-              )
+                )
             })}
           </div>
           <div className="quadro-map">
 
             {openModal ? <Modal type={inputType} operation={inputOperation} modal={openModal} input={inputItem} openChange={handleOpenModal}/> : null}
 
-            {valid && frames.map((frame) => {
-              return (
-                <div className="quadro-item" key={frame.fra_id} onClick={() => handleFrame(frame)}>
-                <RiInboxLine/>
-                  <p>{frame.fra_title}</p>
-                </div>
-              )
-            })}
-            {valid && frames.length !== 0 ? (
-              <div className="quadro-item-add" onClick={() => {
+            {projects.filter(projeto => projeto.pro_id === parseInt(pro_id)).length > 0 && (
+                <>
+                  {frames.map(frame => (
+                    <div className="quadro-item" key={frame.fra_id} onClick={() => handleFrame(frame)}>
+                      <RiInboxLine />
+                      <p>{frame.fra_title}</p>
+                    </div>
+                  ))}
+                  <div className="quadro-item-add" onClick={() => {
                     setInputType("quadro")
                     setInputOperation("create")
-                    setOpenModal(true)}} >
-                <p>+</p>
-              </div>
-      
-            ) : (<></>)}
-
-            {frame && (
-              <>
-                <div className='add-frame'>
-                  <p onClick={() => {
-                    setInputType("tabela")
-                    setInputOperation("create")
-                    setOpenModal(true)}} >Adicionar Tabela</p>
-                </div>
-              </>
-            )}
-            
+                    setOpenModal(true)
+                  }}>
+                    <p>+</p>
+                  </div>
+                </>
+              )
+            }
           </div>
-          
-          {valid ? (
+          {frames.filter(frame => frame.fra_id === parseInt(fra_id)).length > 0 && (
             <>
               <hr className="hr2" />
               <div className="kanbans-container">
@@ -562,11 +465,12 @@ const SubmitDeleteTable = async (kat_id) => {
                   </div>
                 )}
 
-                {modId && frame.length > 0 && (
-                  modId === 1 ? (RenderKanban(frame)) : modId === 2 ? (RenderChecklist(frame)) : (RenderNotes(frame))
-                )}
-
-                {!modId && frames.length > 0 && (
+                {console.log(!fra_id)}
+                {console.log(kanbanTable)}
+                {console.log(frames)}
+                {fra_id ? (RenderKanban()) : RenderChecklist()}
+           
+                {!fra_id && frames.length > 0 && (
                   <div className="projeto-null">
                     <div className="projeto-null-title">
                       <h4>Nenhum quadro selecionado</h4>
@@ -574,11 +478,8 @@ const SubmitDeleteTable = async (kat_id) => {
                     </div>
                   </div>
                 )}
-
-              </div>
-            </>
-          ) : (
-            navigate(`/desktop`)
+                </div>
+              </>
           )}
           
         </div>

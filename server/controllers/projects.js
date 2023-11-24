@@ -11,7 +11,7 @@ export const getProjects = (req, res) => {
 
     db.query(q, values, (err, data) => {
         if (err) {
-            return res.status(500).json("Houve um erro ao obter os projetos!")
+            return res.status(500).json({ error: "Houve um erro ao obter os projetos!" })
         } 
         const { q } = req.query
         const { pro_id } = req.params.pro_id
@@ -35,13 +35,20 @@ export const getProjects = (req, res) => {
 }
 
 export const postProject = (req, res) => {
+
+    const { pro_title, pro_description, pro_createdAt } = req.body
+
+    if (!pro_title || pro_title.length < 3 || !pro_description || pro_description.length < 10 || !pro_createdAt) {
+        return res.status(400).json({ error: "Valores inválidos." })
+    }
+
     const q = "INSERT INTO pro_projects (pro_title, pro_description, pro_state, pro_createdAt, des_id, uda_id) VALUES (?)"
 
     const values = [
-        req.body.pro_title,
-        req.body.pro_description,
+        pro_title,
+        pro_description,
         state,
-        req.body.pro_createdAt,
+        pro_createdAt,
         req.params.des_id,
         req.params.uda_id
     ]
@@ -57,21 +64,23 @@ export const postProject = (req, res) => {
 }
 
 export const patchProject = (req, res) => {
+    const { pro_title, pro_description } = req.body
+    if (!pro_title || pro_title.length < 3 || !pro_description || pro_description.length < 10) {
+        return res.status(400).json({ error: "Valores inválidos."})
+    }
     const q = "UPDATE pro_projects SET pro_title = ?, pro_description = ? WHERE pro_id = ?"
 
     const values = [
-        req.body.pro_title,
-        req.body.pro_description,
+        pro_title,
+        req.pro_description,
         req.params.pro_id
     ]
-
-    console.log(values)
 
     db.query(q, values, (err) => {
         if (err) {
             return res.status(500).json("Houve um erro ao atualizar a tabela")
         }
-        req.io.emit("projectUpdated")
+        req.io.emit("projectUpdated", { desktopId: req.params.des_id })
         return res.sendStatus(200)
     })
 }
@@ -83,9 +92,9 @@ export const deleteProject = (req, res) => {
 
     db.query(q, pro_id, (err) => {
         if (err) {
-            return res.status(500).json("Houve um erro ao desativar o projeto")
+            return res.status(500).json({ error: "Houve um erro ao desativar o projeto."})
         }
-        req.io.emit("kanbanUpdated")
-        return res.status(200).json("Projeto excluido com sucesso!")
+        req.io.emit("projectDeleted", { desktopId: req.body.des_id })
+        return res.status(200).json({ message: "Projeto excluido com sucesso!"})
     })
 }

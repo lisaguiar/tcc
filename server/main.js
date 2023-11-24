@@ -47,6 +47,8 @@ import frameRoutes from './routes/frames.js'
 import kanbanRoutes from './routes/kanban.js'
 import priorityRoutes from './routes/priority.js'
 import favoriteRoutes from './routes/favorites.js'
+import memberRoutes from './routes/members.js'
+import modelRoutes from './routes/models.js'
 
 app.use('/api', authRoutes)
 app.use('/api/note', noteRoutes)
@@ -57,6 +59,8 @@ app.use('/api/frames', frameRoutes)
 app.use('/api/kanban', kanbanRoutes)
 app.use('/api/priority', priorityRoutes)
 app.use('/api/favorites', favoriteRoutes)
+app.use('/api/members', memberRoutes)
+app.use('/api/models', modelRoutes)
 
 server.listen(8001, () => {
     console.log('Conectado na porta 8001')
