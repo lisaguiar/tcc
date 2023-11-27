@@ -26,7 +26,7 @@ const Layout = () => {
   return (
     <>
       <HorizontalNavbar/>
-      <div className="outlet">
+      <div className="outlet p-header-top">
         {currentUser ? <Sidebar/> : <></>}
         <Outlet/>
       </div>

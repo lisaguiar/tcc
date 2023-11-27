@@ -5,89 +5,32 @@ import { RiInboxLine, RiNotification3Line, RiNotification3Fill, RiBookmarkLine, 
 import { MdOutlineGroup } from "react-icons/md"
 import '../styles/Sidebar.css'
 
+const SidebarItem = (props) => {
+  return (
+    <li className='mb-8'>
+      <a href={props.link} className="flex items-center text-white hover:text-white">
+        <div className="h-12 w-auto text-center">{props.icon}</div>
+        <span className="ml-4">{props.description}</span>
+      </a>
+      <span className="tooltip">{props.description}</span>
+  </li>
+  )
+}
+
 const Sidebar = () => {
   return (
-    <div className="sidebar">
-      <div className="logo_details">
-      </div>
-
+    <div className="fixed top-0 left-0 h-screen w-16 bg-black transition-all duration-500 ease">
       <ul className="nav-list">
-        <li>
-          <a href="#">
-            <div className="icon">
-              <RiInboxLine color="white" />
-            </div>
-
-            <span className="link_name">Área de trabalho</span>
-          </a>
-          <span className="tooltip">Área de trabalho</span>
-        </li>
-
-        <li>
-          <a href="#">
-            <div className="icon">
-              <RiNotification3Line color="white" />
-            </div>
-
-            <span className="link_name">Notificação</span>
-          </a>
-          <span className="tooltip">Notificação</span>
-        </li>
-
-        <li>
-          <a href="#">
-            <div className="icon">
-              <MdOutlineGroup />
-            </div>
-
-            <span className="link_name">Compartilhado</span>
-          </a>
-          <span className="tooltip">Compartilhado</span>
-        </li>
-        <li>
-          <a href="#">
-            <div className="icon">
-              <FaRegCalendarAlt />
-            </div>
-
-            <span className="link_name">Calendario</span>
-          </a>
-          <span className="tooltip">Calendario</span>
-        </li>
-        <li>
-          <a href="#">
-            <div className="icon">
-              <RiBookmarkLine />
-            </div>
-
-            <span className="link_name">Favoritos</span>
-          </a>
-          <span className="tooltip">Favoritos</span>
-        </li>
-        <li>
-          <a href="#">
-            <div className="icon">
-              <RiSearchLine />
-            </div>
-
-            <span className="link_name">Pesquisar</span>
-          </a>
-          <span className="tooltip">Pesquisar</span>
-        </li>
-        <li>
-          <a href="#">
-            <div className="icon">
-              <FaCubes />
-            </div>
-
-            <span className="link_name">Gadgets</span>
-          </a>
-          <span className="tooltip">Gadgets</span>
-        </li>
-
+        <SidebarItem link="#" icon={<RiInboxLine color="white" />} description="Área de trabalho" />
+        <SidebarItem link="#" icon={<RiNotification3Line color="white" />} description="Notificação" />
+        <SidebarItem link="#" icon={<MdOutlineGroup />} description="Compartilhado" />
+        <SidebarItem link="#" icon={<FaRegCalendarAlt />} description="Calendário" />
+        <SidebarItem link="#" icon={<RiBookmarkLine />} description="Favoritos" />
+        <SidebarItem link="#" icon={<RiSearchLine />} description="Pesquisar" />
+        <SidebarItem link="#" icon={<FaCubes />} description="Gadgets" />
       </ul>
     </div>
-  );
-};
+  )
+}
 
 export default Sidebar

@@ -88,10 +88,6 @@
     font-size: 1.6em;
 }
 
-.md h1 span, h2 span, h3 span {
-    font-weight: bold !important;
-}
-
 .md-menu {
     padding: 12px;
     position: absolute;

@@ -36,46 +36,11 @@
   font-family: 'Poppins', sans-serif;
 }
 
-h1 {
-  font-weight: var(--font-bold);
-  font-size: var(--font-large);
-  color: var(--dark-grey);
-}
-h3 {
-  font-weight: var(--font-light);
-  font-size: var(--font-medium)
-}
-h4 {
-  font-weight: var(--font-regular);
-  font-size: var(--font-navbar);
-}
-a {
-  font-weight: var(--font-light);
-  font-size: var(--font-navbar);
-  color: var(--black);
-  text-decoration: none;
-}
-p {
-  font-weight: var(--font-light);
-  font-size: var(--font-default);
-}
 
-button {
-  background-color: var(--light-purple) !important;
-  border-radius: 5px;
-  width: auto;
-  padding: 10px 20px;
-  color: var(--white);
-  border: none;
-  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-}
+
+
 button:hover {
   background-color: var(--purple) !important;
-}
-
-.outlet {
-  margin-top: var(--header-height);
 }
 
 ::-webkit-scrollbar {
