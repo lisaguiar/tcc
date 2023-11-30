@@ -612,7 +612,6 @@ body {
 }
 
 .delete-table {
-  margin-left: 50%;
   color: var(--white);
   cursor: pointer;
 }

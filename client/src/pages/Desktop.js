@@ -11,6 +11,7 @@ import moment from 'moment'
 import { useForm } from 'react-hook-form'
 import { RiEdit2Fill, RiHome2Line, RiHome6Line, RiHomeLine, RiMore2Fill } from 'react-icons/ri'
 import { io } from 'socket.io-client'
+import SearchBar from '../functions/SearchBar'
 
 
 const Desktop = () => {
@@ -31,33 +32,7 @@ const Desktop = () => {
 
   const createdAt = moment(Date.now()).format("YYYY-MM-DD HH:mm:ss")
 
-  const handleOpenModal = () => {
-    setShowModal(true)
-  }
-  const handleCloseModal = () => {
-    setShowModal(false)
-  }
 
-  const handleOpenModalUpdate = async () => {
-    await handlePatch(lastDesktop[0]?.des_title, lastDesktop[0]?.des_description)
-    setShowModalUpdate(true)
-  }
-
-  const handleCloseModalUpdate = () => {
-    setShowModalUpdate(false)
-  }
-
-  const handleChangeDesktop = e => {
-    setInputDesktop(prev => ({...prev, [e.target.name]: e.target.value}))
-  }
-
-  const handleOpenModalDelete = () => {
-    setShowModalDelete(true)
-  }
-
-  const handleChangeUpdateDesktop = e => {
-    setInputUpdateDesktop(prev => ({...prev, [e.target.name]: e.target.value}))
-  }
 
   const navigate = useNavigate()
 
@@ -94,36 +69,6 @@ const Desktop = () => {
     }
   }
 
-  const SubmitDesktop = async () => {
-    try {
-      const res = await axios.post(`/api/desktops/post/${use_id}`, inputDesktop)
-      await submitChangeDesktop(res.data)
-    } catch (err) {
-      setErr(err.response.data)
-    }
-    setShowModal(false)
-  }
-
-  const SubmitUpdateDesktop = async () => {
-    try {
-      await axios.patch(`/api/desktops/patch/${last_id}`, inputUpdateDesktop)
-    } catch (err) {
-        console.log(err)
-      setErr(err.data)
-    }
-    setShowModalUpdate(false)
-  }
-
-  const SubmitDeleteDesktop = async () => {
-    try {
-        const res = await axios.patch(`/api/desktops/delete/${last_id}`)
-        setErr(res.data)
-    } catch (err) {
-        console.log(err)
-      setErr(err.data)
-    }
-    setShowModalDelete(false)
-  }
 
   const { handleOnlineStatus, connectionErr } = useHandleDatabaseRequest()
   let isOnline = true
@@ -181,8 +126,8 @@ const Desktop = () => {
   useEffect(() => {
     const getDesktop = async () => {
       try {
-        const res = await axios.get(`/api/desktops/all/${use_id}/${last_id}/?q=${query}`);
-        setDesktop(res.data)
+        const res = await axios.get(`/api/desktops/all/${use_id}/?q=${query}`);
+        setDesktop(res.data.filter(desktop => desktop.des_id === des_id))
       } catch (err) {
         setErr(err.data)
       }
@@ -226,11 +171,11 @@ const Desktop = () => {
   function Dropdown () {
     return (
       <div className="prof_dropdown">
-        <div className="prof_item" disabled={true} onClick={() => {setDropIsOpen(!DropIsOpen); handleOpenModalUpdate()}}>
+        <div className="prof_item" disabled={true} onClick={() => {setDropIsOpen(!DropIsOpen)}}>
           <AiOutlineEdit/>
           <p>Editar Área de Trabalho</p>
         </div>
-        <div className="prof_item" disabled={true} onClick={() => {setDropIsOpen(!DropIsOpen); handleOpenModalDelete()}}>
+        <div className="prof_item" disabled={true} onClick={() => {setDropIsOpen(!DropIsOpen)}}>
           <AiOutlineDelete/>
           <p>Excluir Área de Trabalho</p>
         </div>
@@ -241,70 +186,20 @@ const Desktop = () => {
   return (
     <div>
       {Logado()}
-      {parseInt(last_id) === parseInt(des_id) ? console.log("desktop igual") : (navigate('/desktop'))}
       <section className="home-section">
         <div className="submenuproj">
-          <div className="textmain">
-            <RiHome6Line size={20} />
-            <h4>Áreas de Trabalho</h4>
-          </div>
-          <div className="search">
-            <input className="searchbar" placeholder="🔍 Pesquisar" disabled={!valid} onChange={(e) => setQuery(e.target.value.toLowerCase())}/>
-            <button className="add__desktop" onClick={() => handleOpenModal()}>+</button>
-          </div>
-  
-          <div className='space'></div> 
-
-          <div className="cards">   
-            {valid && lastDesktop && lastDesktop.map((desktop) => {
-              const firstLetter = desktop.des_title.charAt(0).toUpperCase()
-              return (
-                <>
-                  <span className='left'>Área atual</span>
-                  <div className="card card-2" key={desktop.des_id}  onClick={() => navigate('/desktop')}>
-                    <div className="card__letter">
-                      <h3>{firstLetter}</h3>
-                    </div>
-                    <h4 className="card__title">{desktop.des_title}</h4>
-                  </div>
-                </>
-              )
-            })}
-          </div>
+          <SearchBar/>
 
           <div className='space'></div>
 
           <div>
             {err && <ErrorDisplay message={err} />}
           </div>
-
-          <div className="cards">
-          {valid && desktop.length !== 0 && (
-          <span className='left'>Outras áreas de trabalho</span>
-          )}
-            {valid && desktop.length !== 0 && desktop.map((desktop) => {
-              const firstLetter = desktop.des_title.charAt(0).toUpperCase()
-              return (
-                <div className="card card-2" key={desktop.des_id} onClick={() => submitChangeDesktop(desktop.des_id)}>
-                  <div className="card__letter">
-                    <h3>{firstLetter}</h3>
-                  </div>
-                  <h4 className="card__title">{desktop.des_title}</h4>
-                </div>
-              )
-            })}
-            {!count && (
-              <div className="none">
-                <p>Nenhum resultado encontrado!</p>
-              </div>
-            )    
-            }
-          </div>
         </div>
 
         <div className="topo">
           <div className="projeto">
-            {lastDesktop && lastDesktop !== 0 && lastDesktop.map((desktop) => {
+            {desktop && desktop !== 0 && desktop.map((desktop) => {
               return (
                 <div className="projeto-2" key={desktop.des_id}>
                 {DropIsOpen && <Dropdown />}
@@ -316,131 +211,20 @@ const Desktop = () => {
                   <div className="projeto-description">
                     <p>{desktop.des_description}</p>
                     <br/>
-                    <span className="projeto-edit" onClick={() => handleOpenModalUpdate()}><p>Editar Área de Trabalho</p></span>
-                    <span className="projeto-edit" onClick={() => handleOpenModalDelete()}><p>Excluir Área de Trabalho</p></span>
+                    <span className="projeto-edit"><p>Editar Área de Trabalho</p></span>
+                    <span className="projeto-edit"><p>Excluir Área de Trabalho</p></span>
                   </div>
 
                  
                 </div>
               )
-            })}
-            {lastDesktop === 0 && (
-              <div><p>Nada</p></div>
-            )}
-            
+            })}          
           </div> 
           <hr className="hr2"/>     
         </div>
       </section>
-
-
-      {showModal && (
-        <div className="modal">
-          <div className="perfil-usuario-bioo">
-            <div className="lista-topo">
-              <h3>Adicionar área de trabalho</h3>
-              <span className="mdi mdi-close close" onClick={() => handleCloseModal()}><AiOutlineClose/></span>
-            </div>
-
-            <form className="lista-datoss" onSubmit={handleSubmit(SubmitDesktop)}>
-              <label>Nome da área de trabalho</label>
-              <input
-                type="text"
-                placeholder="Insira o título da área de trabalho"
-                className={errors?.des_title && 'input-error'}
-                {...register('des_title', {required: true, minLength: 4})}
-                onChange={handleChangeDesktop}
-              />
-              {errors?.des_title?.type === 'required' && <p className="form_error_message">Insira um nome para a área de trabalho!</p>}
-              {errors?.des_title?.type === 'minLength' && <p className="form_error_message">O nome da área de trabalho precisa conter no mínimo 4 caracteres</p>}
-
-              <div className='space'></div>
-              <label>Descrição da área de trabalho</label>
-              <input
-                type="text"
-                placeholder="Insira a descrição da área de trabalho"
-                className={errors?.des_description && 'input-error'}
-                {...register('des_description', {required: true, minLength: 10})}
-                onChange={handleChangeDesktop}
-              />
-              {errors?.des_description?.type === 'required' && <p className="form_error_message">Insira uma descrição para a área de trabalho!</p>}
-              {errors?.des_description?.type === 'minLength' && <p className="form_error_message">A descrição da área de trabalho precisa conter no mínimo 10 caracteres</p>}
-
-              <ul className="lista-datoss1">
-                <p onClick={() => handleCloseModal()}>Cancelar</p>
-                <button type="submit" disabled={!isValid}>Adicionar área de trabalho</button>
-              </ul>
-            </form>
-
-          </div>
-        </div>
-      )}
-
-      {showModalUpdate && (
-        <div className="modal">
-          <div className="perfil-usuario-bioo">
-            <div className="lista-topo">
-              <h3>Editar área de trabalho</h3>
-              <span className="mdi mdi-close close" onClick={() => handleCloseModalUpdate()}><AiOutlineClose/></span>
-            </div>
-
-            <form className="lista-datoss" onSubmit={handleSubmit(SubmitUpdateDesktop)}>
-              <label>Nome da área de trabalho</label>
-              <input
-                type="text"
-                placeholder="Insira o título da área de trabalho"
-                value={inputUpdateDesktop.des_titleUpdated}
-                className={errors?.pro_titleUpdated && 'input-error'}
-                {...register('des_titleUpdated', {required: true, minLength: 4})}
-                onChange={handleChangeUpdateDesktop}
-              />
-              {errors?.des_titleUpdated?.type === 'required' && <p className="form_error_message">Insira um nome para a área de trabalho!</p>}
-              {errors?.des_titleUpdated?.type === 'minLength' && <p className="form_error_message">O nome da área de trabalho precisa conter no mínimo 4 caracteres</p>}
-
-              <div className='space'></div>
-              <label>Descrição da área de trabalho</label>
-              <input
-                type="text"
-                placeholder="Insira a descrição da área de trabalho"
-                value={inputUpdateDesktop.des_descriptionUpdated}
-                className={errors?.des_descriptionUpdated && 'input-error'}
-                {...register('des_descriptionUpdated', {required: true, minLength: 10})}
-                onChange={handleChangeUpdateDesktop}
-              />
-              {errors?.des_descriptionUpdated?.type === 'required' && <p className="form_error_message">Insira uma descrição para a área de trabalho!</p>}
-              {errors?.des_descriptionUpdated?.type === 'minLength' && <p className="form_error_message">A descrição da área de trabalho precisa conter no mínimo 10 caracteres</p>}
-
-              <ul className="lista-datoss1">
-                <p onClick={() => handleCloseModalUpdate()}>Cancelar</p>
-                <button type="submit" disabled={!isValid}>Editar área de trabalho</button>
-              </ul>
-            </form>
-
-          </div>
-        </div>
-      )}
-
-      {showModalDelete && (
-        <div className="modal">
-          <div className="perfil-usuario-bioo">
-            <div className="lista-topo">
-              <h3>Excluir área de trabalho</h3>
-              <span className="mdi mdi-close close" onClick={() => setShowModalDelete(false)}><AiOutlineClose/></span>
-            </div>
-
-            <form className="lista-datoss" onSubmit={handleSubmit(SubmitDeleteDesktop)}>
-              <label>Tem certeza que deseja excluir a área de trabalho?</label>
-              <ul className="lista-datoss1">
-                <p onClick={() => setShowModalDelete(false)}>Cancelar</p>
-                <button type="submit">Excluir área de trabalho</button>
-              </ul>
-            </form>
-
-          </div>
-        </div>
-      )}
     </div>
-  );
-};
+  )
+}
 
 export default Desktop

@@ -5,8 +5,18 @@
 @layer base {
     :root {
         --header-height: 70px;
+        --sidebar-width: 60px;
+
+        --searchbar-width: 400px;
+        --board-width: calc(100% - var(--searchbar-width));
 
         --light-purple: #8185DA;
+        --light-grey: #F6F7FB;
+        --dark-grey: #3333333c;
+
+        --dark-purple: #23243B;
+        --grey-blue: #485B73;
+        --light: #F0F1F4;
 
         --text-alert: #404040;
         --text-list: #8185DA;
@@ -24,8 +34,13 @@
         @apply text-xl font-light
     }
     button {
-        @apply bg-skin-lp rounded-md px-5 py-2 text-white 
+        @apply bg-light-purple rounded-md px-5 py-2 text-white 
         transition-all duration-300 cursor-pointer
     }
+}
 
+@layer utilities {
+    .gradient-auto {
+        background: linear-gradient(to top, #BBC5EF, #A7BAf2)
+    }
 }

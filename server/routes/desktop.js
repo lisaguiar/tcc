@@ -3,7 +3,7 @@ import { deleteDesktop, getDesktop, getLastDesktop, patchDesktop, postDesktop } 
 
 const router = express.Router()
 
-router.get('/all/:use_id/:last_id', getDesktop)
+router.get('/all/:use_id', getDesktop)
 router.get('/:des_id', getLastDesktop)
 router.post('/post/:use_id', postDesktop)
 router.patch('/patch/:uda_id/:des_id', patchDesktop)

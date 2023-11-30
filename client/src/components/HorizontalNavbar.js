@@ -65,7 +65,7 @@ const HorizontalNavbar = () => {
 
 
     return (
-        <div className="fixed top-0 mx-auto w-full flex justify-center h-header text-sm bg-glass backdrop-blur-md">
+        <div className="fixed top-0 mx-auto w-full flex justify-center h-header text-sm bg-glass backdrop-blur-md z-10">
             <div className='max-w-7xl bg-transparent flex mx-auto space-x-96'>
                 <div className="bg-transparent flex items-center">
                     <Link to='/' className='flex text-center items-center space-x-4'>

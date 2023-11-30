@@ -1,22 +1,22 @@
-import React, { useState, useContext } from "react";
-import jorge from "../images/jorgeCopia.png";
-import "../styles/Navbar.css";
-import { MdNotifications } from 'react-icons/md';
-import { MdPerson2, MdLogout } from 'react-icons/md';
+import React, { useState, useContext } from "react"
+import jorge from "../images/jorgeCopia.png"
+import "../styles/Navbar.css"
+import { MdNotifications } from 'react-icons/md'
+import { MdPerson2, MdLogout } from 'react-icons/md'
 
 import { useNavigate, Link } from 'react-router-dom'
-import { AuthContext } from "../contexts/authContext";
+import { AuthContext } from "../contexts/authContext"
 
 function Navbar() {
 
   const { currentUser, logout } = useContext(AuthContext)
   const navigate = useNavigate()
 
-  const [profDropIsOpen, setProfDropIsOpen] = useState(false);
+  const [profDropIsOpen, setProfDropIsOpen] = useState(false)
 
   function handleLogout() {
-    logout();
-    navigate('/logastro');
+    logout()
+    navigate('/logastro')
   }
 
 

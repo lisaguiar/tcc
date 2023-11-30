@@ -55,6 +55,12 @@ function Modal (props) {
         pri_id: 1
     })
 
+    const [inputDesktop, setInputDesktop] = useState({
+        des_title: "",
+        des_description: "",
+        des_createdAt: createdAt
+    })
+
     const [priorities, setPriorities] = useState("")
     const [models, setModels] = useState("")
     const [members, setMembers] = useState("")
@@ -63,12 +69,46 @@ function Modal (props) {
         props.openChange(false)
     }
 
+    const SubmitDesktop = async (props) => {
+        switch (props.operation) {
+            case "create":
+                try {
+                    console.log(getValues())
+                    const res = await axios.post(`/api/desktops/post/${use_id}`, getValues())
+                    navigate(`/desktop/${res.data}`)
+                } catch (err) {
+                    console.log(err.response.data.error)
+                    setErr(err.response.data.error)
+                }
+            break
+            case "delete":
+                try {
+                    await axios.patch(`/api/desktop/delete/${uda_id}/${props.input[0].des_id}`)
+                    window.location.reload()
+                } catch (err) {
+                    setErr(err.response.data)
+                }
+            break
+            case "update":
+                const data = getValues()
+                try {
+                    await axios.patch(`api/desktop/patch/${uda_id}/${props.input[0].des_id}`, getValues())
+                } catch (err) {
+                    setErr(err.response.data)
+                }
+            break
+        }
+        handleClose()
+    }
+
     const SubmitProject = async (props) => {
         switch (props.operation) {
             case "create":
                 try {
-                    const res = await axios.post(`/api/projects/post/${des_id}/${uda_id}`, getValues())
-                    navigate(`/desktop/${des_id}/project/${res.data}`)
+                    const desktop_id = props.input.des_id
+                    console.log(desktop_id)
+                    const res = await axios.post(`/api/projects/${desktop_id}/2`, getValues())
+                    //navigate(`/desktop/${des_id}/project/${res.data}`)
                 } catch (err) {
                     setErr(err.response.data)
                 }
@@ -82,9 +122,9 @@ function Modal (props) {
                 }
             break
             case "update":
-                const data = getValues()
+                console.log(getValues())
                 try {
-                    await axios.patch(`api/projects/patch/${des_id}/${props.input[0].pro_id}`, data)
+                    await axios.patch(`api/projects/patch/${des_id}/${props.input[0].pro_id}`, getValues())
                 } catch (err) {
                     setErr(err.response.data)
                 }
@@ -97,10 +137,11 @@ function Modal (props) {
         switch (props.operation) {
             case "create":
                 try {
-                    const res = await axios.post(`/api/frames/${pro_id}/${uda_id}`, getValues())
+                    const res = await axios.post(`/api/frames/${pro_id}/2`, getValues())
                     navigate(`/desktop/${des_id}/project/${pro_id}/frame/${res.data}`)
                 } catch (err) {
-                    setErr(err.response.data)
+                    console.log(err)
+                    setErr(err.response.data.error)
                 }
             break
             case "delete":
@@ -113,7 +154,7 @@ function Modal (props) {
             break
             case "update":
                 try {
-                    await axios.patch(`/api/frames/patch/${pro_id}/${props.input[0].fra_id}`, inputFrame)
+                    await axios.patch(`/api/frames/patch/${pro_id}/${props.input[0].fra_id}`, getValues())
                 } catch (err) {
                     setErr(err.response.data)
                 }
@@ -126,24 +167,25 @@ function Modal (props) {
         switch (props.operation) {
             case "create":
                 try {
-                    await axios.post(`/api/kanban/table/${uda_id}/${fra_id}`, inputTable)
+                    await axios.post(`/api/kanban/table/${fra_id}/2`, getValues())
                 } catch (err) {
-                    setErr(err.response.data)
+                    console.log(err.response.data.error)
+                    setErr(err.response.data.error)
                 }
             break
             case "update":
                 try {
-                    await axios.patch(`/api/kanban/patch/${props.input[0].kat_id}`, inputFrame)
+                    await axios.patch(`/api/kanban/patch/${props.input[0].kat_id}`, getValues())
                 } catch (err) {
 
                 }
             break
             case "delete":
+                console.log("DELETAR")
                 try {
-                    const res = await axios.patch(`/api/kanban/table/delete/${props.input[0].kat_id}`)
-                    setErr(res.data)
+                    const res = await axios.patch(`/api/kanban/table/delete/${fra_id}/${props.input}`)
                 } catch (err) {
-                    setErr(err.response.data)
+                    setErr(err.response.data.error)
                 }
             break
         }
@@ -154,20 +196,23 @@ function Modal (props) {
         switch (props.operation) {
             case "create":
                 try {
-                    const res = await axios.post(`/api/kanban/card/${uda_id}/${props.input}`, inputCard)
+                    const res = await axios.post(`/api/kanban/card/${fra_id}/2/${props.input}`, getValues())
                 } catch (err) {
-                    setErr(err.response.data)
+                    console.log(err.response.data.error)
+                    setErr(err.response.data.error)
                 }
             break
             case "update":
                 try {
-                    const res = await axios.patch(`/api/kanban/card/patch/${props.input.kac_id}`, getValues())
+                    console.log(getValues())
+                    const res = await axios.patch(`/api/kanban/card/patch/${fra_id}/${props.input.kac_id}`, getValues())
+                    console.log(res.data)
                 } catch (err) {
                 }
             break
             case "delete":
                 try {
-                    const res = await axios.patch(`/api/kanban/card/delete/${props.input.kac_id}`)
+                    const res = await axios.patch(`/api/kanban/card/delete/${fra_id}/${props.input.kac_id}`)
                     setErr(res.data)
                 } catch (err) {
                     setErr(err.response.data)
@@ -187,28 +232,32 @@ function Modal (props) {
         "tabela": "a " + props.type.charAt(0).toUpperCase() + props.type.slice(1),
         "quadro": "o " + props.type.charAt(0).toUpperCase() + props.type.slice(1),
         "projeto" : "o " + props.type.charAt(0).toUpperCase() + props.type.slice(1),
-        "cartão" : "o " + props.type.charAt(0).toUpperCase() + props.type.slice(1)
+        "cartão" : "o " + props.type.charAt(0).toUpperCase() + props.type.slice(1),
+        "área": "a "  + props.type.charAt(0).toUpperCase() + props.type.slice(1),
     }
       
     const varTitleMapping = {
         "tabela": "kat_title",
         "quadro": "fra_title",
         "projeto" : "pro_title",
-        "cartão" : "kac_title"
+        "cartão" : "kac_title",
+        "área": "des_title"
     }
       
     const varDescriptionMapping = {
         "tabela": "kat_description",
         "quadro": "fra_description",
         "projeto" : "pro_description",
-        "cartão" : "kac_content"
+        "cartão" : "kac_content",
+        "área" : "des_description"
     }
       
     const varHandleMapping = {
         "tabela": setInputTable,
         "quadro": setInputFrame,
         "projeto" : setInputProject,
-        "cartão" : setInputCard
+        "cartão" : setInputCard,
+        "área": setInputDesktop
     }
 
     const varSubmitMapping = {
@@ -216,13 +265,15 @@ function Modal (props) {
         "projeto" : (() => SubmitProject({ operation: props.operation, input: props.input ? props.input : null })),
         "quadro" : (() => SubmitFrame({ operation: props.operation, input: props.input ? props.input : null })),
         "cartão" : (() => SubmitCard({ operation: props.operation, input: props.input})),
+        "área":  (() => SubmitDesktop({ operation: props.operation, input: props.input}))
     }
 
       const varValueMapping = {
         "tabela" : inputTable,
         "projeto" : inputProject,
         "quadro" : inputFrame,
-        "cartão" : inputCard
+        "cartão" : inputCard,
+        "área" : inputDesktop
     }
       
     const varDateMapping = {
@@ -235,8 +286,10 @@ function Modal (props) {
 
     const varCreatedAtMapping = {
         "quadro" : "fra_createdAt",
+        "tabela" : "kat_createdAt",
         "cartão" : "kac_createdAt",
-        "projeto" : "pro_createdAt"
+        "projeto" : "pro_createdAt",
+        "área": "des_createdAt"
     }
 
     const operation = operationMapping[props.operation] 
@@ -249,6 +302,8 @@ function Modal (props) {
     const varDate = varDateMapping[props.type]
     const varPriority = varPriorityMapping[props.type]
     const varCreatedAt = varCreatedAtMapping[props.type]
+
+    console.log(props.input)
 
     const {register, formState: {errors}, handleSubmit, isValid, watch, getValues, setValue} = useForm({
         mode: "all"

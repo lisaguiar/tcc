@@ -34,9 +34,13 @@ export const getKanbanCard = (req, res) => {
 }
 
 export const postTable = (req, res) => {
-    const { kat_title, kat_description, kat_createdAt, kat_position, col_id } = req.body
+    const { kat_title, kat_description, kat_createdAt} = req.body
 
-    if (!kat_title || kat_title.length < 3 || !kat_description || kat_description.length < 10 || !kat_createdAt || !kat_position || !col_id) {
+    console.log(kat_title)
+    console.log(kat_description)
+    console.log(kat_createdAt)
+
+    if (!kat_title || kat_title.length < 3 || !kat_description || kat_description.length < 10 || !kat_createdAt) {
         return res.status(400).json({ error: "Valores inválidos." })
     }
 
@@ -47,10 +51,10 @@ export const postTable = (req, res) => {
         kat_description,
         state,
         kat_createdAt,
-        kat_position,
+        1,
         req.params.uda_id,
         req.params.fra_id,
-        col_id
+        1
     ]
 
     db.query(q, [values], (err, data) => {
@@ -97,6 +101,8 @@ export const patchCard = (req, res) => {
       pri_id,
       req.params.kac_id
     ]
+
+    console.log(values)
   
     db.query(q, values, (err) => {
         if (err) {
@@ -165,9 +171,9 @@ export const deleteTable = (req, res) => {
 }
 
 export const postCard = (req, res) => {
-    const { kac_title, kac_content, kac_deadline, kac_position, kac_createdAt, col_id, pri_id } = req.body
+    const { kac_title, kac_content, kac_deadline, kac_createdAt, pri_id } = req.body
 
-    if (!kac_title || kac_title.length < 3 || !kac_content || kac_content.length < 10 || !kac_deadline || !kac_position || !kac_createdAt || !col_id || !pri_id ) {
+    if (!kac_title || kac_title.length < 3 || !kac_content || kac_content.length < 10 || !kac_deadline || !kac_createdAt || !pri_id ) {
         return res.status(400).json({ error: "Valores inválidos." })
     }
     const q = "INSERT INTO kac_kanbanCard (kac_title, kac_content, kac_deadline, kac_state, kac_position, kac_createdAt, col_id, pri_id, uda_id, kat_id) VALUES (?)"
@@ -177,9 +183,9 @@ export const postCard = (req, res) => {
         kac_content,
         kac_deadline,
         state,
-        kac_position,
+        1,
         kac_createdAt,
-        col_id,
+        1,
         pri_id,
         req.params.uda_id,
         req.params.kat_id

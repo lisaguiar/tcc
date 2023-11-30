@@ -23,8 +23,9 @@ function SearchBar() {
 
     const getProjects = useCallback(async () => {
         try {
-            const res = await axios.get(`/api/projects/all/${des_id}/${pro_id}?=${query}`)
-            setProjects(res.data)
+            const res = await axios.get(`/api/projects/${pro_id}?=${query}`)
+            console.log(res.data)
+            setProjects(res.data.filter(project => project.des_id === parseInt(des_id)))
         } catch (err) {
             setErr(err.data)
         }
@@ -32,8 +33,8 @@ function SearchBar() {
 
     const getDesktops = useCallback(async () => {
         try {
-            const res = await axios.get(`/api/desktops/all/${use_id}/${des_id}/?q=${query}`)
-            setDesktops(res.data)
+            const res = await axios.get(`/api/desktops/all/${use_id}/?q=${query}`)
+            setDesktops(res.data.filter(desktop => desktop.des_id === parseInt(des_id)))
         } catch (err) {
             setErr(err.data)
         }
@@ -107,6 +108,7 @@ function SearchBar() {
     
     const { set: var_set, map: var_map, filter: var_filter, title: var_title, value: var_value } = variableMapping[type]
 
+    const navigate = useNavigate()
     return (
         <div className="submenuproj">
 
@@ -156,7 +158,7 @@ function SearchBar() {
                         .map((item) => {
                             const firstLetter = item[var_title].charAt(0).toUpperCase()
                             return (
-                                <div className="card card-2" key={item[var_filter]} /*onClick={() => submitChangeDesktop(desktop.des_id)}*/>
+                                <div className="card card-2" key={item[var_filter]} onClick={() => navigate(pro_id ? `/desktop/${des_id}/project/${item.pro_id}`: `/desktop/${item.des_id}`)}>
                                 <div className="card__letter">
                                     <h3>{firstLetter}</h3>
                                 </div>

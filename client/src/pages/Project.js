@@ -12,6 +12,7 @@ import ErrorDisplay from '../functions/HandleError'
 import { RiInboxLine, RiLayoutBottom2Line, RiMore2Fill } from 'react-icons/ri'
 import SearchBar from '../functions/SearchBar'
 import Modal from '../functions/Modal'
+import { CiCirclePlus } from "react-icons/ci";
 
 const Project = () => {
 
@@ -106,17 +107,24 @@ const Project = () => {
             ref={provided.innerRef}
             className="kanban-container"
           >
-            <div className="column-container">
+            <div className="column-container justify-between p-2">
               <h4>{nome}</h4>
+              <div className="flex flex=wrap">
+              <CiCirclePlus className="delete-table" onClick={() => {
+                setInputOperation("create")
+                setInputType("cartão")
+                setInputItem(katId)
+                setOpenModal(true)
+              }
+              }/>
               <AiOutlineClose className="delete-table" onClick={() => {
-              /*handleSubmitDeleteTable(katId)*/ 
-              setInputOperation("create")
-              setInputType("cartão")
+              setInputOperation("delete")
+              setInputType("tabela")
               setInputItem(katId)
               setOpenModal(true)
               }
               }/>
-
+            </div>
             </div>
             <div className="itens-container">
               {kanbanCards &&
@@ -183,14 +191,15 @@ const Project = () => {
       navigate(`/desktop/${des_id}/project/${pro_id}/frame/${frame.fra_id}`)
     }
 
-  const getProjects = useCallback(async () => {
-    try {
-      const res = await axios.get(`/api/projects/${des_id}/${pro_id}`)
-      setProjects(res.data)
-    } catch (err) {
-      setErr(err.data)
-    }
-  }, [des_id, pro_id])
+    const getProjects = useCallback(async () => {
+      try {
+          const res = await axios.get(`/api/projects/${pro_id}`)
+          console.log(res.data)
+          setProjects(res.data.filter(project => project.des_id === parseInt(des_id)))
+      } catch (err) {
+          setErr(err.data)
+      }
+  }, [pro_id, des_id])
 
   const getFrames = useCallback(async () => {
     try {
@@ -320,7 +329,7 @@ const Project = () => {
         }
       }
     }
-  }, [fra_id, frames])
+  }, [fra_id, frames, openModal])
 
   const [DropIsOpen, setDropIsOpen] = useState(false)
 
@@ -401,6 +410,7 @@ const Project = () => {
                   <div className="projeto-description">
                     <p>{project.pro_description}</p>
                     <span className="projeto-edit"><p>Ver mais</p></span>
+                    
                   </div>
                 </div>
               )
@@ -419,7 +429,12 @@ const Project = () => {
                   <div className="projeto-description">
                     <p>{frame.fra_description}</p>
                     <span className="projeto-edit" onClick={() => navigate(`/desktop/${des_id}/project/${pro_id}/frame/${frame.fra_id}/edit`)}><p>Ver mais</p></span>
-                  </div>
+                    <span className="projeto-edit" onClick={() => {
+                      setInputType("tabela")
+                      setInputOperation("create")
+                      setOpenModal(true)
+                    }}>Adicionar Tabela</span>
+                    </div>
                 </div>
                 )
             })}

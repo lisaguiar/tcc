@@ -52,8 +52,10 @@ export const getLastDesktop = (req, res) => {
 export const postDesktop = (req, res) => {
     const { des_title, des_description, des_createdAt } = req.body
 
+    console.log(des_title, des_description, des_createdAt)
+
     if (!des_title || des_title.length < 3 || !des_description || des_description.length < 3 || !des_createdAt) {
-        return res.status(400).json({ message: "Valores inválidos!" })
+        return res.status(400).json({ error: "Valores inválidos!" })
     }
 
     const q = "INSERT INTO des_desktop (des_title, des_description, des_state, des_createdAt) VALUES (?)"
@@ -64,6 +66,8 @@ export const postDesktop = (req, res) => {
         state,
         des_createdAt
     ]
+
+    
 
     db.query(q, [values], (err, data) => {
         if (err) {

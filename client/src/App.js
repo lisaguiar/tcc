@@ -17,6 +17,7 @@ import Workspace from './pages/Workspace'
 import Sidebar from './components/Sidebar'
 import Project from './pages/Project'
 import Desktop from './pages/Desktop'
+import Board from './pages/Board'
 
 
 const Layout = () => {
@@ -27,7 +28,7 @@ const Layout = () => {
     <>
       <HorizontalNavbar/>
       <div className="outlet p-header-top">
-        {currentUser ? <Sidebar/> : <></>}
+        {/*{currentUser ? <Sidebar/> : <></>}*/}
         <Outlet/>
       </div>
     </>
@@ -49,6 +50,9 @@ const router = createBrowserRouter ([
       },
       {
         path:'/desktop', element: <Workspace/>
+      },
+      {
+        path:'/boards', element: <Board/>
       },
       {
         path:'/desktop/:des_id', element: <Desktop/>
