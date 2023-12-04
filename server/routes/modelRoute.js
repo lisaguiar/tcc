@@ -1,5 +1,5 @@
 import express from "express"
-import { getModel } from "../controllers/models.js"
+import { getModel } from "../controllers/modelController.js"
 
 const router = express.Router()
 

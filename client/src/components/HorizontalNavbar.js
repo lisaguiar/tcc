@@ -8,7 +8,6 @@ import '../styles/HorizontalNavbar.css'
 import { AiOutlineLogout, AiOutlineUser } from 'react-icons/ai'
 
 const HorizontalNavbar = () => {
-    const { pathname } = useLocation()
     const { currentUser, logout } = useContext(AuthContext)
 
     const use_id = currentUser?.use_id
@@ -17,9 +16,10 @@ const HorizontalNavbar = () => {
     const navigate = useNavigate()
 
     function LinkPage (props) {
+        const { pathname } = useLocation()
         return (
-            <li className="header__nav_li">
-                {(props.path === props.match) ? (<a className="header__nav_path">{props.text}</a>) : (<Link to={props.match}>{props.text}</Link>)}
+            <li className="inline-block rounded-sm text-dark-purple">
+                {(pathname === props.match) ? (<a className="header__nav_path">{props.text}</a>) : (<Link to={props.match}>{props.text}</Link>)}
             </li>
         )
     }
@@ -53,10 +53,14 @@ const HorizontalNavbar = () => {
         } else {
             return (
                 <>
-                    <LinkPage text="Sobre Nós" path={pathname} match="/sobre"/>
-                    <LinkPage text="Funcionalidades" path={pathname} match="/funcionalidades"/>
-                    <li>
-                        <button className="header__nav_button"><Link to="/logastro" className="header__login">Acessar minha conta →</Link></button>
+                    <LinkPage text="Sobre Nós" match="/sobre"/>
+                    <LinkPage text="Funcionalidades" match="/funcionalidades"/>
+                    <LinkPage text="Planos" match="/planos"/>
+                    <li className="inline-block rounded-sm text-dark-purple">
+                        <a className="text-alert">Entrar</a>
+                    </li>
+                    <li className="inline-block">
+                        <button className="header__nav_button"><Link to="/logastro">Criar nova conta →</Link></button>
                     </li>
                 </>
             )
@@ -65,19 +69,20 @@ const HorizontalNavbar = () => {
 
 
     return (
-        <div className="fixed top-0 mx-auto w-full flex justify-center h-header text-sm bg-glass backdrop-blur-md z-10">
-            <div className='max-w-7xl bg-transparent flex mx-auto space-x-96'>
+        <div className="fixed top-0 mx-auto min-w-full w-full flex justify-center h-header text-sm bg-glass backdrop-blur-md z-10">
+            <div className='w-full md:w-3xl bg-transparent flex px-12 justify-between'>
                 <div className="bg-transparent flex items-center">
-                    <Link to='/' className='flex text-center items-center space-x-4'>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="6.004 -0.00000762939 84 96" width="35" height="35">
-                            <path d="M 88 96 h -50.612 c -6.208 0 -15.388 -5.072 -15.388 -15.952 v -52.048 c 0 -0.204 0.032 -0.404 0.088 -0.588 c -0.064 -0.456 -0.088 -0.924 -0.088 -1.412 c 0 -6.076 4.712 -10 12 -10 h 40 c 1.1 0 2 0.896 2 2 s -0.9 2 -2 2 h -40 c -2.408 0 -8 0.584 -8 6 s 5.588 6 8 6 h 54 c 1.1 0 2 0.896 2 2 v 60 c 0 1.1 -0.9 2 -2 2 z M 26 33.832 v 46.216 c 0 8.156 6.796 11.952 11.388 11.952 h 48.612 v -56 h -52 c -3.244 0 -5.972 -0.772 -8 -2.168 z M 23.372 83.42 c -0.172 0 -0.348 -0.024 -0.524 -0.072 c -5.292 -1.428 -8.848 -5.94 -8.848 -11.224 v -52.124 c 0 -6.616 5.384 -12 12 -12 h 40 c 1.1 0 2 0.896 2 2 s -0.9 2 -2 2 h -40 c -4.412 0 -8 3.584 -8 8 v 52.124 c 0 3.452 2.368 6.416 5.896 7.368 c 1.068 0.288 1.696 1.384 1.412 2.448 c -0.244 0.892 -1.056 1.48 -1.936 1.48 z M 16.16 75.6 c -0.124 0 -0.252 -0.008 -0.376 -0.036 c -5.76 -1.092 -9.78 -5.808 -9.78 -11.44 v -52.124 c 0 -6.616 5.384 -12 12 -12 h 44 c 1.1 0 1.996 0.896 1.996 2 s -0.896 2 -2 2 h -44 c -4.412 0 -8 3.584 -8 8 v 52.128 c 0 3.688 2.684 6.776 6.532 7.512 c 1.084 0.208 1.796 1.252 1.588 2.34 c -0.188 0.96 -1.024 1.62 -1.96 1.62 z M82 28h-44c-1.104 0-2-0.896-2-2s0.896-2 2-2h44c1.1 0 2 0.896 2 2s-0.9 2-2 2z" fill="#000"/>
+                    <Link to='/' className="flex cursor-pointer items-center space-x-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="30" height="30">
+                            <path d="M50.333,2.553c-15.686,0-29.611,7.656-38.255,19.422c-1.293,1.632-2.424,3.398-3.371,5.277 C4.998,34.01,2.885,41.763,2.885,50.001c0,26.163,21.285,47.448,47.448,47.448s47.448-21.285,47.448-47.448 S76.496,2.553,50.333,2.553z M44.928,61.67c-7.897,0-14.322-6.506-14.322-14.503s6.425-14.503,14.322-14.503 S59.25,39.17,59.25,47.167S52.825,61.67,44.928,61.67z M44.928,28.412c-10.242,0-18.574,8.413-18.574,18.755 s8.332,18.755,18.574,18.755c0.116,0,0.228-0.016,0.343-0.018c-2.924,1.144-6.097,1.777-9.415,1.777 c-14.448,0-26.203-11.895-26.203-26.515c0-4.277,1.013-8.317,2.798-11.899c0.911-1.658,1.931-3.248,3.045-4.766 c4.808-6.003,12.147-9.85,20.36-9.85c14.011,0,25.488,11.185,26.171,25.192C59.196,33.132,52.599,28.412,44.928,28.412z M50.333,93.197c-23.313,0-42.36-18.568-43.158-41.69c4.214,11.893,15.478,20.427,28.681,20.427 c16.794,0,30.456-13.802,30.456-30.767S52.649,10.4,35.855,10.4c-1.047,0-2.082,0.054-3.103,0.158 c5.374-2.405,11.321-3.754,17.58-3.754c23.818,0,43.196,19.378,43.196,43.196S74.151,93.197,50.333,93.197z" fill="#8185DA" fill-opacity="0.9"/>
                         </svg>
-                        <p className='text-2xl font-normal'>focustastic</p>
+                        <div className="bg-gradient-to-l from-light-purple to-purple bg-clip-text">
+                        </div>
                     </Link>
                 </div>
           
-                <div className="header__nav">
-                    <ul>
+                <div className="hidden md:flex flex-wrap items-center justify-center text-center">
+                    <ul className="space-x-9">
                         <NavBar/>
                     </ul>
                 </div>

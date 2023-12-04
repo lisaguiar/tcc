@@ -73,7 +73,7 @@ const Board = () => {
   let isOnline = true
 
   useEffect(() => {
-    const socket = io('http://localhost:8001')
+    const socket = io('http://localhost:8000')
   
     socket.on('connect', () => {
       console.log('Conectado ao servidor do Socket.io')
@@ -140,7 +140,7 @@ const Board = () => {
   }
   
   useEffect(() => {
-    const socket = io('http://localhost:8001')
+    const socket = io('http://localhost:8000')
 
     getDesktop()
     getProjects()
@@ -196,6 +196,11 @@ const Board = () => {
 
             <div className="flex flex-shrink-0 flex-wrap w-4/6 min-h-fit my-12 items-start">
               <h3 className="font-medium w-full">Suas áreas de trabalho</h3>
+              <p onClick={() => {
+                setInputOperation("create")
+                setInputType("área")
+                setOpenModal(true)
+              }}>Adicionar desktop</p>
               {desktop ? (
                 <div className='flex flex-shrink-0 flex-wrap w-full min-h-full'>
                   {desktop.map((desktop) => {

@@ -49,7 +49,8 @@ export const login = (req, res) => {
             if (!senhaCorreta) {
                 return res.status(400).json("Email ou senha incorretos!")
             } else {
-                var token = jwt.sign({ id: data[0].use_id }, 'jwtSecurity')
+                const secretKey = process.env.SECRET_KEY
+                var token = jwt.sign({ id: data[0].use_id }, secretKey)
                 const { use_password, ...other } = data[0]
 
                 res.cookie("token", token, {

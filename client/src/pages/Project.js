@@ -248,7 +248,7 @@ const Project = () => {
 
   useEffect(() => {
     if (isOnline) {
-      const socket = io('http://localhost:8001')
+      const socket = io('http://localhost:8000')
       getPermission()
       getProjects()
       getFrames()

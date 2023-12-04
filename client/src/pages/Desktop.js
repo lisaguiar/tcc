@@ -74,7 +74,7 @@ const Desktop = () => {
   let isOnline = true
 
   useEffect(() => {
-    const socket = io('http://localhost:8001')
+    const socket = io('http://localhost:8000')
   
     socket.on('connect', () => {
       console.log('Conectado ao servidor do Socket.io')
@@ -133,8 +133,6 @@ const Desktop = () => {
       }
     }
   
-    const socket = io('http://localhost:8001')
-  
     if (last_id) {
       try {
         getLastDesktop()
@@ -149,21 +147,6 @@ const Desktop = () => {
     getDesktop()
     getLastDesktop()
   
-    socket.on('desktopUpdated', () => {
-      getLastDesktop()
-    })
-
-    socket.on('desktopDeleted', (data) => {
-        console.log(data.des_id)
-        console.log(last_id)
-        if (data.des_id === des_id) {
-            submitChangeDesktop(null)
-        }
-    })
-  
-    return () => {
-      socket.disconnect()
-    }
   }, [use_id, query, last_id, isOnline, connectionErr, getLastDesktop, valid])
 
   const [DropIsOpen, setDropIsOpen] = useState(false)

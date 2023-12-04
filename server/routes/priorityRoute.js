@@ -1,5 +1,5 @@
 import express from "express"
-import { getPriority } from "../controllers/priority.js"
+import { getPriority } from "../controllers/priorityController.js"
 
 const router = express.Router()
 

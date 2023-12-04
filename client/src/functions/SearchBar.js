@@ -55,7 +55,7 @@ function SearchBar() {
     "Área de trabalho"
 
     useEffect(() => {
-        const socket = io('http://localhost:8001')
+        const socket = io('http://localhost:8000')
 
         if (fra_id !== undefined) {
             try {

@@ -2,12 +2,18 @@ import { db } from "../config/config.js"
 
 const state = "active"
 
+export const getAll = (req, res) => {
+    return res.status(500).json(req.params.use_id)
+}
 export const getDesktop = (req, res) => {
+    console.log("aaaaaaaa")
     const q = "SELECT a.* FROM des_desktop a JOIN uda_userDesktop b WHERE b.use_id = ? AND a.des_id = b.des_id AND a.des_state = 'active' AND b.uda_state = 'active'"
 
     const values = [
         req.params.use_id
     ]
+
+    console.log("id: " + req.params.use_id)
 
     db.query(q, values, (err, data) => {
         if (err) {
@@ -27,7 +33,7 @@ export const getDesktop = (req, res) => {
             
             const actualDesktop = data.filter(item => item.des_id === des_id)
 
-            return res.status(200).json(search(data), ...actualDesktop)      
+            return res.status(200).json(...search(data), ...actualDesktop)      
         } else {
             return res.status(200).json(data)
         }
@@ -67,8 +73,6 @@ export const postDesktop = (req, res) => {
         des_createdAt
     ]
 
-    
-
     db.query(q, [values], (err, data) => {
         if (err) {
             return res.status(500).json({ error: "Houve um erro ao criar a área de trabalho" })
@@ -80,9 +84,9 @@ export const postDesktop = (req, res) => {
                 const q = "DELETE FROM des_desktop WHERE des_id = ?"
                 db.query(q, data[0].id, (err, data) => {
                     if (err) {
-                        return res.status(500).json("Houve um erro ao criar a área de trabalho 2.")
+                        return res.status(500).json({ error: "Houve um erro ao criar a área de trabalho 2." })
                     }
-                    return res.status(500).json("Houve um erro ao criar a área de trabalho 3.")
+                    return res.status(500).json({ error: "Houve um erro ao criar a área de trabalho 3." })
                 })
             } else {
                 const last_id = data[0].id
@@ -103,9 +107,9 @@ export const postDesktop = (req, res) => {
 
                         db.query(q, last_id, (err, data) => {
                             if (err) {
-                                return res.status(500).json("Houve um erro ao criar a área de trabalho 4.")
+                                return res.status(500).json({ error: "Houve um erro ao criar a área de trabalho 4." })
                             }
-                            return res.status(500).json("Houve um erro ao criar a área de trabalho 5.")
+                            return res.status(500).json({ error: "Houve um erro ao criar a área de trabalho 5."} )
                         })
                     }
                     req.io.emit("postDesktop", { uda_id: data.insertId })
@@ -114,6 +118,7 @@ export const postDesktop = (req, res) => {
             }
         })
     })
+    
 }
 
 export const patchDesktop = (req, res) => {

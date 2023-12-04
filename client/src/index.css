@@ -10,31 +10,41 @@
         --searchbar-width: 400px;
         --board-width: calc(100% - var(--searchbar-width));
 
-        --light-purple: #8185DA;
-        --light-grey: #F6F7FB;
+        --light-purple: #BBC5EF;
+        --purple: #A7BAF2;
+        --light-grey: #F0F1F2;
         --dark-grey: #3333333c;
 
-        --dark-purple: #23243B;
+        --dark-purple: #8185DA;
         --grey-blue: #485B73;
-        --light: #F0F1F4;
+        --light: #F8F9FD    ;
 
-        --text-alert: #404040;
+        --text-alert: #ff0000;
         --text-list: #8185DA;
     }
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@600&display=swap');
+
 @layer components {
+    * {
+        font-family: 'Exo 2', sans-serif;
+    }
     h1 {
-        @apply text-6xl font-medium
+        @apply text-6xl font-semibold
     }
     h2 {
         @apply text-2xl font-light
     }
     h3 {
-        @apply text-xl font-light
+        @apply text-2xl font-medium
+    }
+    p, a, li {
+        @apply text-lg
     }
     button {
-        @apply bg-light-purple rounded-md px-5 py-2 text-white 
+        @apply bg-purple h-11 font-semibold rounded-3xl px-5 py-2 text-white hover:bg-dark-purple
         transition-all duration-300 cursor-pointer
     }
 }
@@ -42,5 +52,13 @@
 @layer utilities {
     .gradient-auto {
         background: linear-gradient(to top, #BBC5EF, #A7BAf2)
+    }
+    .button-white {
+        @apply bg-white text-light-purple hover:bg-light-grey hover:text-dark-purple
+        transition-all duration-300 cursor-pointer
+    }
+    .card {
+        @apply rounded-lg border-2 p-0 border-transparent bg-gradient-to-b from-glass opacity-80 via-white to-glass bg-clip-padding backdrop-filter backdrop-blur-3xl
+        shadow-md hover:shadow-lg focus:shadow-lg transition duration-300 ease-in-out decoration-inherit block m-0 overflow-hidden no-underline select-none whitespace-normal
     }
 }

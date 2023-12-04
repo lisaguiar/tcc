@@ -109,7 +109,7 @@ const Workspace = () => {
   let isOnline = true
 
   useEffect(() => {
-    const socket = io('http://localhost:8001')
+    const socket = io('http://localhost:8000')
   
     socket.on('connect', () => {
       console.log('Conectado ao servidor do Socket.io')
@@ -177,7 +177,7 @@ const Workspace = () => {
       }
     }
   
-    const socket = io('http://localhost:8001')
+    const socket = io('http://localhost:8000')
   
     if (last_id) {
       try {

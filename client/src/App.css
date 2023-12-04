@@ -35,13 +35,7 @@
 * {
   font-family: 'Poppins', sans-serif;
 }
-
-
-
-
-button:hover {
-  background-color: var(--purple) !important;
-}
+  
 
 ::-webkit-scrollbar {
   width: 7px;

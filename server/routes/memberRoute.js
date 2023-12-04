@@ -1,5 +1,5 @@
 import express from 'express'
-import { deleteMember, getMember, patchMember, postMember } from '../controllers/members.js'
+import { deleteMember, getMember, patchMember, postMember } from '../controllers/memberController.js'
 
 const router = express.Router()
 

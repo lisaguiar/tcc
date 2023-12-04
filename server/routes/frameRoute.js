@@ -1,5 +1,5 @@
 import express from 'express'
-import { deleteFrame, getFrames, patchFrame, postFrame } from '../controllers/frames.js'
+import { deleteFrame, getFrames, patchFrame, postFrame } from '../controllers/framesController.js'
 
 const router = express.Router()
 
