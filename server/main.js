@@ -55,14 +55,10 @@ function handleSocketConnection(io, token) {
         if (!token || !decoded) {
             console.log("Conexão falhou.")
             socket.disconnect(true)
-            return
+            return res.status(400).json({ error: "Conexão falhou." })
         }
-
-        const { id } = decoded
-        console.log(`Usuário autenticado com ID ${id}`)
-
         socket.on('disconnect', () => {
-            console.log("Usuário desconectado.")
+            return res.status(200).json({ message: "Usuário desconectado." })
         })
     })
 }
@@ -70,7 +66,7 @@ function handleSocketConnection(io, token) {
 app.use('/api', authRoutes)
 app.use('/api/note', noteRoutes)
 app.use('/api/user', userRoutes)
-app.use('/api/desktop', desktopRoutes)
+app.use('/api/desktops', desktopRoutes)
 app.use('/api/projects', projectRoutes)
 app.use('/api/frames', frameRoutes)
 app.use('/api/kanban', kanbanRoutes)

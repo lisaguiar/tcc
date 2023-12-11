@@ -3,10 +3,12 @@ import { db } from "../config/config.js"
 const state = "active"
 
 export const getFrames = (req, res) => {
+const { pro_id } = req.params
+
     const q = "SELECT * FROM fra_frames WHERE pro_id = ? AND fra_state = 'active'"
 
     const values = [
-        req.params.pro_id
+        pro_id
     ]
 
     db.query(q, values, (err, data) => {
@@ -14,7 +16,6 @@ export const getFrames = (req, res) => {
             return res.status(500).json(err)
         } 
         const { q } = req.query
-        const { fra_id } = req.params.fra_id
 
         if (q) {
             const keys = ["fra_title"]
@@ -24,28 +25,19 @@ export const getFrames = (req, res) => {
                     keys.some((key) => item[key].toLowerCase().includes(q))
                 )
             }      
-
-            const actualFrame = data.filter(item => item.fra_id === fra_id)
-
-            return res.status(200).json(...search(data), ...actualFrame)         
+            return res.status(200).json(search(data))         
         } else {
             return res.status(200).json(data)
         }
     })
 }
 
+export const getOneFrame = (req, res) => {
+
+}
+
 export const postFrame = (req, res) => {
     const { fra_title, fra_description, fra_createdAt, mod_id } = req.body
-
-    if (!fra_title || fra_title.length < 3 || !fra_description || fra_description.length < 10 || !fra_createdAt || !mod_id) {
-        console.log(fra_title)
-        console.log(fra_description)
-        console.log(fra_createdAt)
-        console.log(mod_id)
-
-        console.log(fra._title.length)
-        return res.status(400).json({ error: "Valores inválidos para criação do quadro." })
-    }
 
     const q = "INSERT INTO fra_frames (fra_title, fra_description, fra_createdAt, fra_state, mod_id, pro_id, uda_id) values (?)"
 
