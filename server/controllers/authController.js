@@ -5,31 +5,36 @@ import jwt from 'jsonwebtoken'
 const state = "active"
 
 export const register = (req, res) => {
+    const { use_email, use_name, use_password, use_createdAt } = req.body
+
     const q = "SELECT * FROM use_users WHERE use_email = ?"
-    db.query(q, [req.body.use_email], (err, data) => {
+
+    db.query(q, [use_email], (err, data) => {
         if (err) {
-            return res.json(err)
+            return res.json({ error: "Houve um erro ao realizar o cadastro." })
         }
         if (data.length) {
-            return res.status(409).json("E-mail já cadastrado!")
+            return res.status(409).json({ message: "E-mail já cadastrado." })
         }
+
         var salt = bcrypt.genSaltSync(10)
-        var hash = bcrypt.hashSync(req.body.use_password, salt)
+        var hash = bcrypt.hashSync(use_password, salt)
 
         const q = "INSERT INTO use_users (`use_email`, `use_password`, `use_name`, `use_createdAt`, `use_state`) VALUES (?)"
+
         const values = [
-            req.body.use_email,
+            use_email,
             hash,
-            req.body.use_name,
-            req.body.use_createdAt,
+            use_name,
+            use_createdAt,
             state
         ]
 
         db.query(q, [values], (err, data) => {
             if (err) {
-                return res.status(500).json("Não foi possível realizar o cadastro!")
+                return res.status(500).json({ error: "Não foi possível realizar o cadastro!" })
             }
-            return res.status(200).json("Usuário cadastrado com sucesso!")
+            return res.status(200).json({ message: "Usuário cadastrado com sucesso!" })
         })
     })
 }
@@ -82,8 +87,6 @@ export const desktop = (req, res) => {
             return res.status(400).json(err)
         }
         const r = JSON.stringify(data)
-        console.log("B:" + r)
-            return res.status(200).json(data)
-            
+            return res.status(200).json(data)  
     })
 }

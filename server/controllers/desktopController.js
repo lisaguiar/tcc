@@ -2,7 +2,7 @@ import { db } from "../config/config.js"
 
 const state = "active"
 
-export const getDesktop = (req, res) => {
+export const getDesktops = (req, res) => {
     const { use_id } = req.params
 
     const q = "SELECT a.* FROM des_desktop a JOIN uda_userDesktop b WHERE b.use_id = ? AND a.des_id = b.des_id AND a.des_state = 'active' AND b.uda_state = 'active'"
@@ -33,7 +33,7 @@ export const getDesktop = (req, res) => {
     })
 }
 
-export const getOneDesktop = (req, res) => {
+export const getDesktop = (req, res) => {
     const { use_id, des_id } = req.params 
 
     const q = "SELECT a.* FROM des_desktop a JOIN uda_userDesktop b WHERE b.use_id = ? AND a.des_id = ? AND a.des_id = b.des_id AND a.des_state = 'active' AND b.uda_state = 'active'"
@@ -52,16 +52,16 @@ export const getOneDesktop = (req, res) => {
 }
 
 export const postDesktop = (req, res) => {
-    const { des_title, des_description, des_createdAt } = req.body
+    const { title, description, createdAt } = req.body
     const { use_id } = req.params
     
     const q = "INSERT INTO des_desktop (des_title, des_description, des_state, des_createdAt) VALUES (?)"
 
     const values = [
-        des_title,
-        des_description,
+        title,
+        description,
         state,
-        des_createdAt
+        createdAt
     ]
 
     db.query(q, [values], (err, data) => {
@@ -91,17 +91,17 @@ export const postDesktop = (req, res) => {
 
                 const values = [
                     state,
-                    des_createdAt,
+                    createdAt,
                     use_id,
                     des_id,
                     '1'
                 ]
 
-                db.query(q, [values], (err, data) => {
+                db.query(q, [values], (err) => {
                     if (err) {
                         const q = "DELETE FROM des_desktop WHERE des_id = ?"
 
-                        db.query(q, des_id, (err, data) => {
+                        db.query(q, des_id, (err) => {
                             if (err) {
                                 return res.status(500).json({ error: "Houve um erro ao criar a área de trabalho." })
                             }
@@ -118,14 +118,14 @@ export const postDesktop = (req, res) => {
 }
 
 export const patchDesktop = (req, res) => {
-    const { des_titleUpdated, des_descriptionUpdated } = req.body
+    const { title, description } = req.body
     const { des_id } = req.params
 
     const q = "UPDATE des_desktop SET des_title = ?, des_description = ? WHERE des_id = ?"
 
     const values = [
-        des_titleUpdated, 
-        des_descriptionUpdated,
+        title, 
+        description,
         des_id
     ]
   

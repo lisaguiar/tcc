@@ -33,7 +33,7 @@ export const getProjects = (req, res) => {
     })
 }
 
-export const getOneProject = (req, res) => {
+export const getProject = (req, res) => {
     const { des_id, pro_id } = req.params 
 
     const q = "SELECT * FROM pro_projects WHERE des_id = ? AND pro_id = ? AND pro_state = 'active'"
@@ -52,16 +52,16 @@ export const getOneProject = (req, res) => {
 }
 
 export const postProject = (req, res) => {
-    const { pro_title, pro_description, pro_createdAt } = req.body
+    const { title, description, createdAt } = req.body
     const { des_id, uda_id } = req.params 
 
     const q = "INSERT INTO pro_projects (pro_title, pro_description, pro_state, pro_createdAt, des_id, uda_id) VALUES (?)"
 
     const values = [
-        pro_title,
-        pro_description,
+        title,
+        description,
         state,
-        pro_createdAt,
+        createdAt,
         des_id,
         uda_id
     ]
@@ -77,14 +77,14 @@ export const postProject = (req, res) => {
 }
 
 export const patchProject = (req, res) => {
-    const { pro_title, pro_description } = req.body
+    const { title, description } = req.body
     const { des_id, pro_id } = req.params 
     
     const q = "UPDATE pro_projects SET pro_title = ?, pro_description = ? WHERE pro_id = ?"
 
     const values = [
-        pro_title,
-        pro_description,
+        title,
+        description,
         pro_id
     ]
 

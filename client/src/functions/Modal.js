@@ -298,7 +298,6 @@ function Modal (props) {
     const varDescription = varDescriptionMapping[props.type]
     const varHandle = varHandleMapping[props.type]
     const varSubmit = varSubmitMapping[props.type]
-    const varValue = varValueMapping[props.type] 
     const varDate = varDateMapping[props.type]
     const varPriority = varPriorityMapping[props.type]
     const varCreatedAt = varCreatedAtMapping[props.type]

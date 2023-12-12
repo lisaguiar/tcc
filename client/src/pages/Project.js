@@ -71,9 +71,6 @@ const Project = () => {
     
       axios
         .patch('/api/kanban/card', updatedCardData)
-        .then(() => {
-          console.log('Posição e endereço do cartão atualizados no banco de dados')
-        })
         .catch((error) => {
           setErr(error.response.data)
         })
