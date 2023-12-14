@@ -1,4 +1,4 @@
-const About = () => {
+const Member = () => {
 
     return (
         <div>
@@ -7,4 +7,4 @@ const About = () => {
     )
 }
 
-export default About
+export default Member

@@ -3,7 +3,7 @@ import { AiOutlineClose } from "react-icons/ai"
 import { useForm } from 'react-hook-form'
 import axios from "../api/axios"
 import { useLocation, useNavigate } from "react-router-dom"
-import { AuthContext } from "../contexts/authContext"
+import { AuthContext } from "../contexts/auth"
 import moment from "moment"
 
 

@@ -5,11 +5,10 @@ import validator from 'validator'
 import '../styles/Logastro.css'
 import '../images/jorge.png'
 import { useNavigate } from "react-router-dom"
-import { AuthContext } from '../contexts/authContext'
+import { AuthContext } from '../contexts/auth'
 import moment from 'moment'
-import ErrorDisplay from '../functions/HandleError'
-import { useHandleDatabaseRequest } from '../functions/IsOnline'
-import { NaoLogado } from '../components/IsLogged'
+import ErrorDisplay from '../components/HandleError'
+import { useHandleDatabaseRequest } from '../middleware/connection'
 
 const Logastro = () => {
     const { currentUser, setCurrentUser, login } = useContext(AuthContext)
@@ -90,7 +89,6 @@ const Logastro = () => {
 
     return (
         <div className="body">
-        {NaoLogado()}
             {err && <ErrorDisplay message={err} />}
             <div className="container" id="container">
                 <div className="form-container register-container">

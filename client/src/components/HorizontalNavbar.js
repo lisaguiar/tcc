@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { MdPerson2, MdLogout } from 'react-icons/md'
 import { useContext, useState } from 'react'
-import { AuthContext } from '../contexts/authContext'
+import { AuthContext } from '../contexts/auth'
 import { CiLogout } from 'react-icons/ci'
 
 import '../styles/HorizontalNavbar.css'

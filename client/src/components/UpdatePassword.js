@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { AuthContext } from '../contexts/authContext';
+import { AuthContext } from '../contexts/auth';
 import { useForm } from 'react-hook-form';
 import axios from '../api/axios';
 

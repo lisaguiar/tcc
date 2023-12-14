@@ -1,17 +1,16 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import '../styles/Workspace.css'
 import axios from '../api/axios'
-import { AuthContext } from '../contexts/authContext'
+import { AuthContext } from '../contexts/auth'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { Logado } from '../components/IsLogged'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-import { useHandleDatabaseRequest } from '../functions/IsOnline'
+import { useHandleDatabaseRequest } from '../middleware/connection'
 import { io } from 'socket.io-client'
 import { AiFillDelete, AiOutlineClose, AiOutlineEdit, AiOutlineUsergroupAdd } from 'react-icons/ai'
-import ErrorDisplay from '../functions/HandleError'
+import ErrorDisplay from '../components/HandleError'
 import { RiInboxLine, RiLayoutBottom2Line, RiMore2Fill } from 'react-icons/ri'
-import SearchBar from '../functions/SearchBar'
-import Modal from '../functions/Modal'
+import SearchBar from '../components/SearchBar'
+import Modal from '../components/Modal'
 import { CiCirclePlus } from "react-icons/ci";
 
 const Project = () => {
@@ -387,7 +386,6 @@ const Project = () => {
 
   return (
     <div>
-      {Logado()}
       <section className="home-section">
         <SearchBar/>
         <div className="topo">

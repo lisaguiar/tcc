@@ -1,17 +1,16 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import '../styles/Workspace.css'
 import axios from '../api/axios'
-import { AuthContext } from '../contexts/authContext'
+import { AuthContext } from '../contexts/auth'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Logado } from '../components/IsLogged'
-import { useHandleDatabaseRequest } from '../functions/IsOnline'
-import ErrorDisplay from '../functions/HandleError'
+import { useHandleDatabaseRequest } from '../middleware/connection'
+import ErrorDisplay from '../components/HandleError'
 import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit, AiOutlineUsergroupAdd } from 'react-icons/ai'
 import moment from 'moment'
 import { useForm } from 'react-hook-form'
 import { RiEdit2Fill, RiHome2Line, RiHome6Line, RiHomeLine, RiMore2Fill } from 'react-icons/ri'
 import { io } from 'socket.io-client'
-import SearchBar from '../functions/SearchBar'
+import SearchBar from '../components/SearchBar'
 
 
 const Desktop = () => {
@@ -168,7 +167,6 @@ const Desktop = () => {
 
   return (
     <div>
-      {Logado()}
       <section className="home-section">
         <div className="submenuproj">
           <SearchBar/>

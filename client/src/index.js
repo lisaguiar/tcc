@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import { AuthContextProvider } from './contexts/authContext'
+import { AuthContextProvider } from './contexts/auth'
 import "./index.css"
 
 const root = ReactDOM.createRoot(document.getElementById('root'))

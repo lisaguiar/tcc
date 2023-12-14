@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react"
-import { AuthContext } from "../contexts/authContext"
+import { AuthContext } from "../contexts/auth"
 import { useNavigate, useLocation } from "react-router-dom"
 import axios from "../api/axios"
 import { AiOutlineEdit } from "react-icons/ai"

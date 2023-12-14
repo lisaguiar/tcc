@@ -53,15 +53,8 @@ app.use((req, res, next) => {
 
 function handleSocketConnection(io, token) {
     io.on('connection', (socket) => {
-        const decoded = token && decodedToken(token)
 
-        if (!token || !decoded) {
-            console.log("Conexão falhou.")
-            socket.disconnect(true)
-            return res.status(400).json({ error: "Conexão falhou." })
-        }
         socket.on('disconnect', () => {
-            return res.status(200).json({ message: "Usuário desconectado." })
         })
     })
 }

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '../contexts/authContext';
+import { AuthContext } from '../contexts/auth';
 import { useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { FaRegStar, FaStar } from "react-icons/fa";

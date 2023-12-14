@@ -1,29 +1,20 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import '../styles/Workspace.css'
 import axios from '../api/axios'
-import { AuthContext } from '../contexts/authContext'
+import { AuthContext } from '../contexts/auth'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Logado } from '../components/IsLogged'
-import { useHandleDatabaseRequest } from '../functions/IsOnline'
-import ErrorDisplay from '../functions/HandleError'
-import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit, AiOutlineUsergroupAdd } from 'react-icons/ai'
+import { useHandleDatabaseRequest } from '../middleware/connection'
 import moment from 'moment'
-import { useForm } from 'react-hook-form'
-import { RiEdit2Fill, RiHome2Line, RiHome6Line, RiHomeLine, RiLayoutBottom2Fill, RiLayoutBottom2Line, RiMore2Fill, RiSettingsLine, RiTrelloFill, RiUserLine } from 'react-icons/ri'
+import { RiSettingsLine, RiTrelloFill, RiUserLine } from 'react-icons/ri'
 import { io } from 'socket.io-client'
-import SearchBar from '../functions/SearchBar'
-import Modal from '../functions/Modal'
-
+import SearchBar from '../components/SearchBar'
+import Modal from '../components/Modal'
 
 const Board = () => {
   const [openModal, setOpenModal] = useState(false)
   const [inputType, setInputType] = useState("")
   const [inputOperation, setInputOperation] = useState("")
   const [inputItem, setInputItem] = useState("")
-
-  const {register, formState: {errors, isValid}, handleSubmit} = useForm({
-    mode: "all"
-  })
 
   const { currentUser, handleDesktop } = useContext(AuthContext)
   const location = useLocation()
@@ -185,7 +176,6 @@ const Board = () => {
 
   return (
     <div>
-      {Logado()}
       <section className="relative bg-white h-full">
         <SearchBar/>
 
