@@ -18,11 +18,17 @@ const validateFields = (req, res, next) => {
           req.body[fieldName] = 'Campo não preenchido.'
           break
         }
-
         validationRules.push(
           body(fieldName)
             .custom((value) => value.length >= 10)
             .withMessage("A descrição deve conter no mínimo 10 caracteres.")
+        )
+        break
+      case fieldName.includes('content'):
+        validationRules.push(
+          body(fieldName)
+            .isLength({ min: 1 })
+            .withMessage("O conteúdo não pode estar vazio.")
         )
         break
       case fieldName.includes('createdAt'):

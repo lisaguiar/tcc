@@ -23,49 +23,56 @@ export const postMember = (req, res) => {
 }
 
 export const getMember = (req, res) => {
+    const { uda_id } = req.params
+
     const q = "SELECT * FROM uda_userDesktop WHERE uda_id = ? AND uda_state = 'active'"
 
     const values = [
-        req.params.uda_id
+        uda_id
     ]
 
-    db.query(q, values, (err) => {
+    db.query(q, values, (err, data) => {
         if (err) {
-            return res.status(500).json({ error: "Error finding member" })
+            return res.status(500).json({ error: "Houve um erro ao procurar membros." })
         }
-        return res.status(201).json({ message: "Member found successfully" })
+        return res.status(201).json(data)
     })
 }
 
 export const patchMember = (req, res) => {
+    const { per_id } = req.body
+    const { uda_id, des_id } = req.params
+
     const q = "UPDATE uda_userDesktop SET per_id = ? WHERE uda_id = ?"
 
     const values = [
-        req.body.per_id,
-        req.params.uda_id
+        per_id,
+        uda_id
     ]
 
     db.query(q, values, (err) => {
         if (err) {
-            return res.status(500).json({ error: "Error patching member" })
+            return res.status(500).json({ error: "Houve um erro ao atualizar as permissões do membro." })
         }
-        req.io.emit("memberUpdated", { desktopId: req.params.des_id} )
-        return res.status(201).json({ message: "Member patched successfully" })
+        req.io.emit("memberUpdated", { desktopId: des_id} )
+        return res.status(201).json({ message: "Membro atualizado com sucesso." })
     })
 }
 
 export const deleteMember = (req, res) => {
+    const { uda_id, des_id } = req.params
+
     const q = "UPDATE uda_userDesktop SET uda_state = 'disabled' WHERE uda_id = ?"
 
     const values = [
-        req.params.uda_id
+        uda_id
     ]
 
     db.query(q, values, (err) => {
         if (err) {
-            return res.status(500).json({ error: "Error excluding member" })
+            return res.status(500).json({ error: "Houve um erro ao excluir o membro." })
         }
-        req.io.emit("memberDeleted", { desktopId: req.params.des_id} )
-        return res.status(201).json({ message: "Member deleted successfully" })
+        req.io.emit("memberDeleted", { desktopId: des_id })
+        return res.status(201).json({ message: "Member excluído com sucesso." })
     })
 }

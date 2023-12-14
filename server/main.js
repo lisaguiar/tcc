@@ -4,18 +4,21 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'; 
 import { createServer } from 'http'
 import { Server } from 'socket.io'
+import { decodedToken } from './middleware/token.js'
 import authRoutes from './routes/authRoute.js'
-import noteRoutes from './routes/note.js'
+import noteRoutes from './routes/annotationRoute.js'
 import userRoutes from './routes/userRoute.js'
 import desktopRoutes from './routes/desktopRoute.js'
 import projectRoutes from './routes/projectRoute.js'
 import frameRoutes from './routes/frameRoute.js'
 import kanbanRoutes from './routes/kanbanRoute.js'
+import checklistRoutes from './routes/checklistRoute.js'
+import annotationRoutes from './routes/annotationRoute.js'
 import priorityRoutes from './routes/priorityRoute.js'
 import favoriteRoutes from './routes/favoriteRoute.js'
 import memberRoutes from './routes/memberRoute.js'
 import modelRoutes from './routes/modelRoute.js'
-import { decodedToken } from './middleware/token.js'
+import notificationRoutes from './routes/notificationRoute.js'
 
 dotenv.config({ path: "./config/.env"})
 
@@ -70,13 +73,16 @@ app.use('/api/desktops', desktopRoutes)
 app.use('/api/projects', projectRoutes)
 app.use('/api/frames', frameRoutes)
 app.use('/api/kanban', kanbanRoutes)
+app.use('/api/checklist', checklistRoutes)
+app.use('/api/annotation', annotationRoutes)
 app.use('/api/priority', priorityRoutes)
 app.use('/api/favorites', favoriteRoutes)
 app.use('/api/members', memberRoutes)
+app.use('/api/notification', notificationRoutes)
 app.use('/api/models', modelRoutes)
 
 const PORT = process.env.PORT || 8000
 
 server.listen(PORT, () => {
-    console.log(`Conectado na porta ${PORT}`)
-});
+    console.log(`Conectado na porta ${PORT}.`)
+})

@@ -113,9 +113,9 @@ export const postCard = (req, res) => {
         description,
         deadline,
         state,
-        1,
+        '1',
         createdAt,
-        1,
+        '1',
         pri_id,
         uda_id,
         kat_id
