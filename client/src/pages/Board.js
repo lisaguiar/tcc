@@ -3,12 +3,11 @@ import '../styles/Workspace.css'
 
 import { AuthContext } from '../contexts/auth'
 import { useNavigate } from 'react-router-dom'
-import { useHandleDatabaseRequest } from '../middleware/connection'
 import { RiSettingsLine, RiTrelloFill, RiUserLine } from 'react-icons/ri'
 import SearchBar from '../components/SearchBar'
 import Modal from '../components/Modal'
 import { getDesktops } from '../api/desktop'
-import { getAllProjects, getProjects } from '../api/project'
+import { getAllProjects } from '../api/project'
 
 const Board = () => {
     const [openModal, setOpenModal] = useState(false)
@@ -29,16 +28,6 @@ const use_id = currentUser?.use_id
     const handleOpenModal = (value) => {
     setOpenModal(value)
     }
-
-    const { handleOnlineStatus, connectionErr } = useHandleDatabaseRequest()
-    let isOnline = true
-
-    useEffect(() => {
-    const fetchData = async () => {
-        isOnline = handleOnlineStatus()
-    }
-    fetchData()
-    })
 
     const getDesktop = async () => {
         try {
@@ -63,7 +52,7 @@ const use_id = currentUser?.use_id
         getDesktop()
         getProject()
 
-    }, [use_id, isOnline, connectionErr])
+    }, [])
 
     return (
         <div>
@@ -135,11 +124,11 @@ const use_id = currentUser?.use_id
                     </div>
                     ) : (
                     <div>
-                        <p className="mt-2 w-full">Você ainda não é membro de nenhuma área de trabalho. <a className="text-light-purple cursor-pointer" onClick={() => {
+                        <p className="mt-2 w-full">Você ainda não é membro de nenhuma área de trabalho. <span className="text-light-purple cursor-pointer" onClick={() => {
                             setInputOperation("create")
                             setInputType("área")
                             setOpenModal(true)
-                        }}> Criar área de trabalho.</a>
+                        }}> Criar área de trabalho.</span>
                         </p>
                     </div>
                     )}
