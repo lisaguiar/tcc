@@ -1,152 +1,56 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import '../styles/Workspace.css'
-import axios from '../api/axios'
-import { AuthContext } from '../contexts/auth'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useHandleDatabaseRequest } from '../middleware/connection'
 import ErrorDisplay from '../components/HandleError'
-import { AiOutlineClose, AiOutlineDelete, AiOutlineEdit, AiOutlineUsergroupAdd } from 'react-icons/ai'
-import moment from 'moment'
-import { useForm } from 'react-hook-form'
-import { RiEdit2Fill, RiHome2Line, RiHome6Line, RiHomeLine, RiMore2Fill } from 'react-icons/ri'
-import { io } from 'socket.io-client'
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
+import { RiMore2Fill } from 'react-icons/ri'
+
 import SearchBar from '../components/SearchBar'
+
+import { getDesktop } from '../api/desktop'
+import { getProjects } from '../api/project'
 
 
 const Desktop = () => {
-  const [showModal, setShowModal] = useState(false)
-  const [showModalUpdate, setShowModalUpdate] = useState(false)
-  const [showModalDelete, setShowModalDelete] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
+  const [inputType, setInputType] = useState("")
+  const [inputOperation, setInputOperation] = useState("")
+  const [inputItem, setInputItem] = useState("")
 
-  const {register, formState: {errors, isValid}, handleSubmit} = useForm({
-    mode: "all"
-  })
-
-  const { currentUser, handleDesktop } = useContext(AuthContext)
   const location = useLocation()
-  const use_id = currentUser?.use_id
-  const last_id = currentUser?.use_lastDesktop
-  const uda_id = currentUser?.uda_id
-  const des_id = location.pathname.split("/")[2]
 
-  const createdAt = moment(Date.now()).format("YYYY-MM-DD HH:mm:ss")
-
-
+  const uda_id = location.pathname.split("/")[2]
+  const des_id = location.pathname.split("/")[4]
 
   const navigate = useNavigate()
 
   const [desktop, setDesktop] = useState([])
-  const [valid, setValid] = useState(true)
+  const [project, setProject] = useState([])
   const [query, setQuery] = useState("")
-  const [count, setCount] = useState(true)
-  const [lastDesktop, setLastDesktop] = useState([])
   const [err, setErr] = useState("")
 
-  const [inputDesktop, setInputDesktop] = useState({
-    des_title: "",
-    des_description: "",
-    des_createdAt: createdAt
-  })
-
-  const [inputUpdateDesktop, setInputUpdateDesktop] = useState({
-    des_titleUpdated: "",
-    des_descriptionUpdated: ""
-  })
-
-  const handlePatch = async (title, description) => {
-    await setInputUpdateDesktop({
-        des_titleUpdated: title,
-        des_descriptionUpdated: description
-    })
-  }
-
-  const submitChangeDesktop = async (values) => {
-    try {
-      await handleDesktop(values)
-    } catch (err) {
-      setErr("Houve um problema ao acessar a área de trabalho selecionada. Tente novamente mais tarde.")
-    }
-  }
-
-
-  const { handleOnlineStatus, connectionErr } = useHandleDatabaseRequest()
-  let isOnline = true
-
   useEffect(() => {
-    const socket = io('http://localhost:8000')
-  
-    socket.on('connect', () => {
-      console.log('Conectado ao servidor do Socket.io')
-    })
-
-    socket.on('desktopUpdated', (data) => {
-        // Atualize a lista de projetos com o novo projeto recebido
-        console.log('Área atualizada:', data.desktopId)
-    })
-
-    socket.on('desktopDeleted', () => {
-        // Atualize a lista de projetos com o novo projeto recebido
-        console.log('Área deletada!')
-    })
-  
-    socket.on('disconnect', () => {
-      console.log('Desconectado do servidor do Socket.io')
-    })
-  
-    return () => {
-      socket.disconnect()
-    }
-  }, [])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      isOnline = await handleOnlineStatus()
-    }
-    fetchData()
-  })
-
-  const getLastDesktop = useCallback(async () => {
-    try {
-      const res = await axios.get(`/api/desktops/${last_id}`)
-      setLastDesktop(res.data)
-
-      setValid(true)
-
-      if (res.data.length === 0 || !res.data.length) {
-        setCount(false)
-      } else {
-        setCount(true)
-      }
-    } catch (err) {
-      setErr(err.data)
-    }
-  }, [last_id])
-  
-  useEffect(() => {
-    const getDesktop = async () => {
+    const fetchDesktop = async () => {
       try {
-        const res = await axios.get(`/api/desktops/all/${use_id}/?q=${query}`);
-        setDesktop(res.data.filter(desktop => desktop.des_id === des_id))
-      } catch (err) {
-        setErr(err.data)
+        const res = await getDesktop(des_id)
+        setDesktop(res)
+      } catch (error) {
+          setErr(error.response.data.error)
       }
-    }
-  
-    if (last_id) {
-      try {
-        getLastDesktop()
-      } catch (err) {
-        setErr("Houve um erro")
-      }
-    } else {
-      setValid(false)
-      setErr(connectionErr)
     }
 
-    getDesktop()
-    getLastDesktop()
-  
-  }, [use_id, query, last_id, isOnline, connectionErr, getLastDesktop, valid])
+    const fetchProject = async () => {
+      try {
+        const res = await getProjects(des_id)
+        setProject(res)
+      } catch (error) {
+        setErr(error.response.data.error)
+    }
+    }
+
+    fetchDesktop()
+    fetchProject()
+  }, [uda_id, query])
 
   const [DropIsOpen, setDropIsOpen] = useState(false)
 
@@ -169,7 +73,8 @@ const Desktop = () => {
     <div>
       <section className="home-section">
         <div className="submenuproj">
-          <SearchBar/>
+          
+        <SearchBar/>
 
           <div className='space'></div>
 

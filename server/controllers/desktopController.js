@@ -5,7 +5,7 @@ const state = "active"
 export const getDesktops = (req, res) => {
     const { use_id } = req.params
 
-    const q = "SELECT a.* FROM des_desktop a JOIN uda_userDesktop b WHERE b.use_id = ? AND a.des_id = b.des_id AND a.des_state = 'active' AND b.uda_state = 'active'"
+    const q = "SELECT a.*, b.uda_id FROM des_desktop a JOIN uda_userDesktop b WHERE b.use_id = ? AND a.des_id = b.des_id AND a.des_state = 'active' AND b.uda_state = 'active'"
 
     const values = [
         use_id
@@ -34,12 +34,11 @@ export const getDesktops = (req, res) => {
 }
 
 export const getDesktop = (req, res) => {
-    const { use_id, des_id } = req.params 
+    const { des_id } = req.params 
 
-    const q = "SELECT a.* FROM des_desktop a JOIN uda_userDesktop b WHERE b.use_id = ? AND a.des_id = ? AND a.des_id = b.des_id AND a.des_state = 'active' AND b.uda_state = 'active'"
+    const q = "SELECT * FROM des_desktop WHERE des_id = ? des_state = 'active'"
 
     const values = [
-        use_id,
         des_id
     ]
 

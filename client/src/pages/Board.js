@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import '../styles/Workspace.css'
 
 import { AuthContext } from '../contexts/auth'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { RiSettingsLine, RiTrelloFill, RiUserLine } from 'react-icons/ri'
 import SearchBar from '../components/SearchBar'
 import Modal from '../components/Modal'
@@ -17,7 +17,9 @@ const Board = () => {
 
     const { currentUser } = useContext(AuthContext)
 
-const use_id = currentUser?.use_id
+    const location = useLocation()
+
+    const use_id = location.pathname.split("/")[2]
 
     const navigate = useNavigate()
 
@@ -29,30 +31,29 @@ const use_id = currentUser?.use_id
     setOpenModal(value)
     }
 
-    const getDesktop = async () => {
-        try {
-            const res = await getDesktops(use_id)
-            setDesktop(res)
-        } catch (error) {
-            setErr(error.response.data.error)
-        }
-    }
-
-    const getProject = async () => {
-        try {
-            const res = await getAllProjects()
-            setProjects(res)
-        } catch (error) {
-            setErr(error.response.data.error)
-        }
-    }
-
     useEffect(() => {
+        const fetchDesktop = async () => {
+            try {
+                const res = await getDesktops(use_id)
+                setDesktop(res)
+            } catch (error) {
+                setErr(error.response.data.error)
+            }
+        }
+    
+        const fetchProject = async () => {
+            try {
+                const res = await getAllProjects()
+                setProjects(res)
+            } catch (error) {
+                setErr(error.response.data.error)
+            }
+        }
 
-        getDesktop()
-        getProject()
+        fetchDesktop()
+        fetchProject()
 
-    }, [])
+    }, [use_id])
 
     return (
         <div>

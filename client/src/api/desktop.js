@@ -14,9 +14,9 @@ export const getDesktops = async (use_id, query) => {
     }
 }
 
-export const getDesktop = async (use_id, des_id) => {
+export const getDesktop = async (des_id) => {
     try {
-        const res = await axios.get(`/api/desktops/${use_id}/${des_id}`)
+        const res = await axios.get(`/api/desktops/one/${des_id}`)
         return res.data
     } catch (error) {
         console.log("erro")
