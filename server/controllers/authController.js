@@ -74,6 +74,17 @@ export const logout = (req, res) => {
     }).status(200).json("Usuário deslogado.")
 }
 
+export const handleToken = (req, res) => {
+    const cookies = req.cookies
+    
+    if (!cookies) {
+        return res.status(500).json({ error: "Sessão não autorizada." })
+    }
+
+    return res.status(200).json(cookies)
+}
+
+
 export const desktop = (req, res) => {
     const q = "SELECT uda_id, per_id FROM uda_userDesktop WHERE use_id = ? AND des_id = ?"
 

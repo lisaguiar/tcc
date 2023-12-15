@@ -64,7 +64,7 @@ export const postDesktop = (req, res) => {
         createdAt
     ]
 
-    db.query(q, [values], (err, data) => {
+    db.query(q, [values], (err) => {
         if (err) {
             return res.status(500).json({ error: "Houve um erro ao criar a área de trabalho." })
         }
@@ -78,7 +78,7 @@ export const postDesktop = (req, res) => {
                     data[0].id
                 ]
 
-                db.query(q, values, (err, data) => {
+                db.query(q, values, (err) => {
                     if (err) {
                         return res.status(500).json({ error: "Houve um erro ao criar a área de trabalho." })
                     }

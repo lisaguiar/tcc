@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import '../styles/Workspace.css'
 import axios from '../api/axios'
 import { AuthContext } from '../contexts/auth'
+import { SocketContext } from '../contexts/socket-io'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useHandleDatabaseRequest } from '../middleware/connection'
 import moment from 'moment'
@@ -9,6 +10,7 @@ import { RiSettingsLine, RiTrelloFill, RiUserLine } from 'react-icons/ri'
 import { io } from 'socket.io-client'
 import SearchBar from '../components/SearchBar'
 import Modal from '../components/Modal'
+import { useSocket } from '../contexts/socket-io'
 
 const Board = () => {
   const [openModal, setOpenModal] = useState(false)
@@ -17,6 +19,7 @@ const Board = () => {
   const [inputItem, setInputItem] = useState("")
 
   const { currentUser, handleDesktop } = useContext(AuthContext)
+  const socket = useContext(SocketContext)
   const location = useLocation()
   const use_id = currentUser?.use_id
   const last_id = currentUser?.use_lastDesktop
@@ -131,7 +134,7 @@ const Board = () => {
   }
   
   useEffect(() => {
-    const socket = io('http://localhost:8000')
+
 
     getDesktop()
     getProjects()

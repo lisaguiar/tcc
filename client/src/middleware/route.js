@@ -1,12 +1,33 @@
 import React, { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../contexts/auth'
+import Cookies from 'js-cookie'
+import axios from '../api/axios'
+
+const logout = async () => {
+  await axios.post("/api/logout")
+}
 
 export const AuthenticatedRoute = ({ element }) => {
-  const { currentUser } = useContext(AuthContext)
+  const { currentUser, setCurrentUser } = useContext(AuthContext)
   const navigate = useNavigate()
-
+  
   useEffect(() => {
+    const getToken = async () => {
+      try {
+        const res = await axios.get('/api/token')
+        const token = res.data.token || null
+
+        if (!token) {
+          await logout()
+          await setCurrentUser(null)
+        }
+      } catch (err) {
+        console.log(err.response.data.error)
+      }
+    }
+    getToken()
+
     if (!currentUser) {
       navigate('/')
     }
@@ -16,15 +37,28 @@ export const AuthenticatedRoute = ({ element }) => {
 }
 
 export const UnauthenticatedRoute =({ element }) => {
-    const { currentUser } = useContext(AuthContext)
+    const { currentUser, setCurrentUser } = useContext(AuthContext)
     const navigate = useNavigate()
-  
-    useEffect(() => {
-      if (currentUser) {
-        const uda_id = currentUser.uda_id
 
-        navigate(`/u/${uda_id}/boards`)
+    useEffect(() => {
+      const getToken = async () => {
+        try {
+          const res = await axios.get('/api/token')
+          const token = res.data.token || null
+
+          if (currentUser && token) {
+            const use_id = currentUser.use_id
+
+            navigate(`/u/${use_id}/boards`)
+          } else {
+            await logout()
+            await setCurrentUser(null)
+          }
+        } catch (err) {
+          console.log(err.responde.data.error)
+        }
       }
+      getToken()
     }, [currentUser, navigate])
    
     return currentUser ? null : element
