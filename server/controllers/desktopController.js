@@ -36,7 +36,7 @@ export const getDesktops = (req, res) => {
 export const getDesktop = (req, res) => {
     const { des_id } = req.params 
 
-    const q = "SELECT * FROM des_desktop WHERE des_id = ? des_state = 'active'"
+    const q = "SELECT a.*, b.uda_id, c.use_name FROM des_desktop a JOIN uda_userDesktop b JOIN use_users c WHERE a.des_id = ? AND a.des_id = b.des_id AND c.use_id = b.use_id AND b.per_id = '1' AND a.des_state = 'active' AND b.uda_state = 'active'"
 
     const values = [
         des_id

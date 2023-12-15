@@ -26,7 +26,7 @@ const Desktop = () => {
 
   const [desktop, setDesktop] = useState([])
   const [project, setProject] = useState([])
-  const [query, setQuery] = useState("")
+
   const [err, setErr] = useState("")
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const Desktop = () => {
 
     fetchDesktop()
     fetchProject()
-  }, [uda_id, query])
+  }, [uda_id])
 
   const [DropIsOpen, setDropIsOpen] = useState(false)
 
@@ -69,44 +69,98 @@ const Desktop = () => {
     )
   }
 
-  return (
-    <div>
-      <section className="home-section">
-        <div className="submenuproj">
-          
-        <SearchBar/>
-
-          <div className='space'></div>
-
-          <div>
-            {err && <ErrorDisplay message={err} />}
-          </div>
-        </div>
-
-        <div className="topo">
-          <div className="projeto">
-            {desktop && desktop !== 0 && desktop.map((desktop) => {
+  function Desktop () {
+    const renderDesktop = () => {
+      if (desktop.length > 0) {
+        return (
+          <>
+            {desktop.map((desktop) => {
               return (
-                <div className="projeto-2" key={desktop.des_id}>
-                {DropIsOpen && <Dropdown />}
-                  <div className="projeto-title">
-                   <p>{desktop.des_title}</p>
-                  </div>
-                  <span className="projeto-icon-edit" onClick={() => setDropIsOpen(!DropIsOpen)}><RiMore2Fill size={20}/></span>
+                <div key={desktop.des_id}>
+                  <p>{desktop.des_title}</p>
+                  <p>{desktop.des_description}</p>
+                  <p>Criado por: {desktop.use_name}</p>
 
-                  <div className="projeto-description">
-                    <p>{desktop.des_description}</p>
-                    <br/>
+                  <div>
                     <span className="projeto-edit"><p>Editar Área de Trabalho</p></span>
                     <span className="projeto-edit"><p>Excluir Área de Trabalho</p></span>
                   </div>
-
-                 
                 </div>
               )
-            })}          
-          </div> 
-          <hr className="hr2"/>     
+            })}
+          </>
+        )
+      } else {
+        return (
+          <>
+            <p>área de trabalho nao existe ???? recarrega a pagina ai ou tenta dnv ne</p>
+          </>
+        )
+      }
+    }
+    
+    return (
+      <>
+        <div className="flex">
+          {renderDesktop()}
+        </div>
+      </>
+    )
+  }
+
+  function Project () {
+    const renderProject = () => {
+      if (project.length > 0) {
+        return (
+          <>
+            {project.map((project) => {
+              return (
+                <div key={project.pro_id} className='border flex w-full flex-wrap'>
+                  <p className='w-full'>{project.pro_title}</p>
+                  <p>{project.pro_description}</p>
+                </div>
+              )
+            })}
+          </>
+        )
+      } else {
+        return (
+          <>
+            <p>nenhum projeto mano cria ai (insane botao pra eu fazer a função depois)</p>
+          </>
+        )
+      }
+    }
+
+    return (
+      <>
+        <div className='flex flex-wrap'>
+          {renderProject()}
+        </div>
+      </>
+    )
+  }
+
+  return (
+    <div>
+      <section className="relative bg-white h-full">
+              
+        <SearchBar/>
+
+        <div className="flex flex-col absolute top-0 left-searchbar w-board min-w-fit max-w-full min-h-full max-h-fit bg-white  border rounded-tl-lg border-dark-grey">
+          <div className="px-16 w-full h-full">
+          
+  
+
+            <div className="flex flex-shrink-0 flex-wrap w-4/6 min-h-fit my-12 items-start">
+
+              {Desktop()}
+              <div>
+                {Project()}
+              </div>
+
+            </div>   
+          </div>
         </div>
       </section>
     </div>
