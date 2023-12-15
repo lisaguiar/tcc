@@ -28,7 +28,7 @@ const Board = () => {
     const [err, setErr] = useState("")
 
     const handleOpenModal = (value) => {
-    setOpenModal(value)
+        setOpenModal(value)
     }
 
     useEffect(() => {

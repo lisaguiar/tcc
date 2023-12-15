@@ -35,10 +35,9 @@ export const getFrames = (req, res) => {
 export const getFrame = (req, res) => {
     const { pro_id, fra_id } = req.params
 
-    const q = "SELECT * FROM fra_frames WHERE pro_id = ? AND fra_id = ? AND fra_state = 'active'"
+    const q = "SELECT * FROM fra_frames WHERE fra_id = ? AND fra_state = 'active'"
 
     const values = [
-        pro_id,
         fra_id
     ]
 

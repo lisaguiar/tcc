@@ -23,9 +23,9 @@ export const getProjects = async (des_id, query) => {
     }
 }
 
-export const getProject = async (des_id, pro_id) => {
+export const getProject = async (pro_id) => {
     try {
-        const res = await axios.get(`/api/projects/${des_id}/${pro_id}`)
+        const res = await axios.get(`/api/projects/one/${pro_id}`)
         return res.data
     } catch (error) {
         console.log("erro")

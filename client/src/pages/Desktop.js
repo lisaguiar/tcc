@@ -25,7 +25,7 @@ const Desktop = () => {
   const navigate = useNavigate()
 
   const [desktop, setDesktop] = useState([])
-  const [project, setProject] = useState([])
+  const [projects, setProjects] = useState([])
 
   const [err, setErr] = useState("")
 
@@ -42,7 +42,7 @@ const Desktop = () => {
     const fetchProject = async () => {
       try {
         const res = await getProjects(des_id)
-        setProject(res)
+        setProjects(res)
       } catch (error) {
         setErr(error.response.data.error)
     }
@@ -108,12 +108,12 @@ const Desktop = () => {
     )
   }
 
-  function Project () {
+  function Projects () {
     const renderProject = () => {
-      if (project.length > 0) {
+      if (projects.length > 0) {
         return (
           <>
-            {project.map((project) => {
+            {projects.map((project) => {
               return (
                 <div key={project.pro_id} className='border flex w-full flex-wrap'>
                   <p className='w-full'>{project.pro_title}</p>
@@ -156,7 +156,7 @@ const Desktop = () => {
 
               {Desktop()}
               <div>
-                {Project()}
+                {Projects()}
               </div>
 
             </div>   

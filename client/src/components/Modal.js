@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from "react-router-dom"
 import { AuthContext } from "../contexts/auth"
 import moment from "moment"
+import { ModalContext } from "../contexts/modal"
 
 
 function Modal (props) {
@@ -63,10 +64,6 @@ function Modal (props) {
     const [priorities, setPriorities] = useState("")
     const [models, setModels] = useState("")
     const [members, setMembers] = useState("")
-    
-    const handleClose = () => {
-        props.openChange(false)
-    }
 
     /*const SubmitDesktop = async (props) => {
         switch (props.operation) {
@@ -301,13 +298,12 @@ function Modal (props) {
     const varPriority = varPriorityMapping[props.type]
     const varCreatedAt = varCreatedAtMapping[props.type]
 
-    console.log(props.input)
-
     const {register, formState: {errors}, handleSubmit, isValid, watch, getValues, setValue} = useForm({
         mode: "all"
     })
 
-    console.log('', getValues())
+    const { closeModal } = useContext(ModalContext)
+
     useEffect(() => {
         const renderValue = () => {
             if (props.operation === "update" && props.input.length !== 0) {
@@ -371,7 +367,7 @@ function Modal (props) {
             <div className='lista-datoss1'>
                 <label>Tem certeza que deseja excluir {type}?</label>
                 <ul className="lista-datoss1">
-                <p onClick={() => handleClose()}>Cancelar</p>
+                <p onClick={() => closeModal()}>Cancelar</p>
                 <button type="submit">Excluir {props.type}</button>
                 </ul>
             </div>
@@ -408,7 +404,7 @@ function Modal (props) {
                 {renderKanban()}
                 {renderFrame()}
                 <ul className="lista-datoss1">
-                    <p onClick={() => handleClose()}>Cancelar</p>
+                    <p onClick={() => closeModal()}>Cancelar</p>
                     <button type="submit">{operation} {props.type}</button>
                 </ul>
             </div>
@@ -503,7 +499,8 @@ function Modal (props) {
             <div className="perfil-usuario-bioo">
             <div className="lista-topo">
                 <h3>{operation} {props.type}</h3>
-                <span className="mdi mdi-close close" onClick={handleClose}><AiOutlineClose/></span>
+                <span className="mdi mdi-close close" onClick={() => {
+                    closeModal()}}><AiOutlineClose/></span>
             </div>
             
             <form className='lista-datoss' onSubmit={handleSubmit(varSubmit)}>

@@ -45,12 +45,11 @@ export const getProjects = (req, res) => {
 }
 
 export const getProject = (req, res) => {
-    const { des_id, pro_id } = req.params 
+    const { pro_id } = req.params 
 
-    const q = "SELECT * FROM pro_projects WHERE des_id = ? AND pro_id = ? AND pro_state = 'active'"
+    const q = "SELECT * FROM pro_projects WHERE pro_id = ? AND pro_state = 'active'"
 
     const values = [
-        des_id,
         pro_id
     ]
 
