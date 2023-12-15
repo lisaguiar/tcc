@@ -76,7 +76,7 @@ export const logout = (req, res) => {
 
 export const handleToken = (req, res) => {
     const cookies = req.cookies
-    
+
     if (!cookies) {
         return res.status(500).json({ error: "Sessão não autorizada." })
     }

@@ -15,7 +15,7 @@ const router = express.Router()
 router.get('/:use_id', authenticateToken, validateParams, getDesktops)
 router.get('/:use_id/:des_id', authenticateToken, validateParams, getDesktop)
 router.post('/:use_id', authenticateToken, validateParams, validateFields, postDesktop)
-router.patch('/patch/:des_id', authenticateToken, validateParams, validateFields, patchDesktop)
-router.patch('/delete/:des_id', authenticateToken, validateParams, deleteDesktop)
+router.patch('/patch/:uda_id/:des_id', authenticateToken, validateParams, validateFields, patchDesktop)
+router.patch('/delete/:uda_id/:des_id', authenticateToken, validateParams, deleteDesktop)
 
 export default router

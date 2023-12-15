@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../contexts/auth'
-import Cookies from 'js-cookie'
 import axios from '../api/axios'
 
 const logout = async () => {
@@ -55,7 +54,7 @@ export const UnauthenticatedRoute =({ element }) => {
             await setCurrentUser(null)
           }
         } catch (err) {
-          console.log(err.responde.data.error)
+          console.log(err.response.data)
         }
       }
       getToken()

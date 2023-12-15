@@ -1,6 +1,7 @@
 import express from 'express'
 import { 
     deleteProject, 
+    getAllProjects,
     getProjects, 
     getProject,
     patchProject,
@@ -12,6 +13,7 @@ import validateFields from '../middleware/body.js'
 
 const router = express.Router()
 
+router.get('/', authenticateToken, getAllProjects)
 router.get('/:des_id', authenticateToken, validateParams, getProjects)
 router.get('/:des_id/:pro_id', authenticateToken, validateParams, getProject)
 router.post('/:des_id/:uda_id', authenticateToken, validateParams, validateFields, postProject)

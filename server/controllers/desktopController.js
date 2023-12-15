@@ -119,7 +119,7 @@ export const postDesktop = (req, res) => {
 
 export const patchDesktop = (req, res) => {
     const { title, description } = req.body
-    const { des_id } = req.params
+    const { des_id, uda_id } = req.params
 
     const q = "UPDATE des_desktop SET des_title = ?, des_description = ? WHERE des_id = ?"
 
@@ -133,14 +133,14 @@ export const patchDesktop = (req, res) => {
         if (err) {
             return res.status(400).json({ error: "Houve um erro ao atualizar a área de trabalho." })
         }
-        req.io.emit('desktopUpdated', { desId: des_id })
+        req.io.emit('desktopUpdated', { udaId: uda_id })
 
         return res.status(200).json({ message: "Área de Trabalho atualizada!" })
     })
 }
 
 export const deleteDesktop = (req, res) => {
-    const { des_id } = req.params
+    const { des_id, uda_id } = req.params
 
     const q = "UPDATE des_desktop SET des_state = 'disabled' WHERE des_id = ?"
 
@@ -148,11 +148,11 @@ export const deleteDesktop = (req, res) => {
         des_id
     ]
   
-    db.query(q, values, (err, data) => {
+    db.query(q, values, (err) => {
         if (err) {
             return res.status(400).json({ error: "Houve um erro ao excluir a área de trabalho." })
         }
-        req.io.emit('desktopDeleted', { desId: des_id })
+        req.io.emit('desktopDeleted', { udaId: uda_id })
 
         return res.status(200).json({ message: "Área de Trabalho excluída!" })
     })

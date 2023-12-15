@@ -2,6 +2,17 @@ import { db } from "../config/config.js"
 
 const state = "active"
 
+export const getAllProjects = (req, res) => {
+    const q = "SELECT * FROM pro_projects WHERE pro_state = 'active'"
+
+    db.query(q, (err, data) => {
+        if (err) {
+            return res.status(500).json({ error: "Houve um erro ao obter os projetos." })
+        } 
+        return res.status(200).json(data)
+    })
+}
+
 export const getProjects = (req, res) => {
     const { des_id } = req.params
 

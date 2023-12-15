@@ -8,7 +8,6 @@ import { RiSettingsLine, RiTrelloFill, RiUserLine } from 'react-icons/ri'
 import SearchBar from '../components/SearchBar'
 import Modal from '../components/Modal'
 import { getDesktops } from '../api/desktop'
-import { getAllProjects, getProjects } from '../api/project'
 
 const Board = () => {
     const [openModal, setOpenModal] = useState(false)
@@ -41,27 +40,22 @@ const use_id = currentUser?.use_id
     })
 
     const getDesktop = async () => {
-        try {
-            const res = await getDesktops(use_id)
-            setDesktop(res)
-        } catch (error) {
-            setErr(error.response.data.error)
-        }
+    try {
+        const res = await getDesktops(use_id)
+        setDesktop(res)
+    } catch (error) {
+        setErr(error.response.data.error)
+    }
     }
 
-    const getProject = async () => {
-        try {
-            const res = await getAllProjects()
-            setProjects(res)
-        } catch (error) {
-            setErr(error.response.data.error)
-        }
+    const getProjects = async () => {
+
     }
 
     useEffect(() => {
 
         getDesktop()
-        getProject()
+        getProjects()
 
     }, [use_id, isOnline, connectionErr])
 

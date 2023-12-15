@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import '../styles/Workspace.css'
-import axios from '../api/axios'
 import { AuthContext } from '../contexts/auth'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
@@ -68,11 +67,11 @@ const Project = () => {
         kac_id: updatedCard.kac_id,
       }
     
-      axios
+      /*axios
         .patch('/api/kanban/card', updatedCardData)
         .catch((error) => {
           setErr(error.response.data)
-        })
+        })*/
     }
   
     return (
@@ -189,9 +188,9 @@ const Project = () => {
 
     const getProjects = useCallback(async () => {
       try {
-          const res = await axios.get(`/api/projects/${pro_id}`)
+          /*const res = await axios.get(`/api/projects/${pro_id}`)
           console.log(res.data)
-          setProjects(res.data.filter(project => project.des_id === parseInt(des_id)))
+          setProjects(res.data.filter(project => project.des_id === parseInt(des_id)))*/
       } catch (err) {
           setErr(err.data)
       }
@@ -199,9 +198,9 @@ const Project = () => {
 
   const getFrames = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/frames/${pro_id}/${fra_id}`)
+      /*const res = await axios.get(`/api/frames/${pro_id}/${fra_id}`)
       console.log(res.data)
-      setFrames(res.data)
+      setFrames(res.data)*/
     } catch (err) {
       setErr(err.data)
     }
@@ -209,8 +208,8 @@ const Project = () => {
 
   const getKanbanTable = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/kanban/table/${fra_id}`)
-      setKanbanTable(res.data)
+      /*const res = await axios.get(`/api/kanban/table/${fra_id}`)
+      setKanbanTable(res.data)*/
     } catch (err) {
       setErr(err.data)
     }
@@ -218,8 +217,8 @@ const Project = () => {
 
   const getKanbanCards = useCallback(async () => {
     try {
-      const res = await axios.get(`/api/kanban/card/${fra_id}`)
-      setKanbanCards(res.data)
+      /*const res = await axios.get(`/api/kanban/card/${fra_id}`)
+      setKanbanCards(res.data)*/
     } catch (err) {
       setErr(err.data)
     }

@@ -22,7 +22,6 @@ const Layout = () => {
     <>
       <HorizontalNavbar/>
       <div className="outlet p-header-top">
-        {currentUser && <Sidebar />}
         <Outlet/>
       </div>
     </>

@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react"
 import { AiOutlineClose } from "react-icons/ai"
 import { useForm } from 'react-hook-form'
-import axios from "../api/axios"
 import { useLocation, useNavigate } from "react-router-dom"
 import { AuthContext } from "../contexts/auth"
 import moment from "moment"
@@ -69,7 +68,7 @@ function Modal (props) {
         props.openChange(false)
     }
 
-    const SubmitDesktop = async (props) => {
+    /*const SubmitDesktop = async (props) => {
         switch (props.operation) {
             case "create":
                 try {
@@ -220,7 +219,7 @@ function Modal (props) {
             break
         }
         handleClose()
-    }
+    }*/
 
     const operationMapping = {
         "delete": "Deletar",
@@ -261,11 +260,11 @@ function Modal (props) {
     }
 
     const varSubmitMapping = {
-        "tabela" : (() => SubmitTable({ operation: props.operation, input: props.input ? props.input : null})),
+       /* "tabela" : (() => SubmitTable({ operation: props.operation, input: props.input ? props.input : null})),
         "projeto" : (() => SubmitProject({ operation: props.operation, input: props.input ? props.input : null })),
         "quadro" : (() => SubmitFrame({ operation: props.operation, input: props.input ? props.input : null })),
         "cartão" : (() => SubmitCard({ operation: props.operation, input: props.input})),
-        "área":  (() => SubmitDesktop({ operation: props.operation, input: props.input}))
+        "área":  (() => SubmitDesktop({ operation: props.operation, input: props.input}))*/
     }
 
       const varValueMapping = {
@@ -335,17 +334,17 @@ function Modal (props) {
         }
         const getPriority = async () => {
             try {
-                const res = await axios.get(`/api/priority`)
-                setPriorities(res.data)
+                /*const res = await axios.get(`/api/priority`)
+                setPriorities(res.data)*/
             } catch (err) {
                 setErr(err.response.data)
             }
         }
         const getModels = async () => {
             try {
-                const res = await axios.get(`/api/models`)
+                /*const res = await axios.get(`/api/models`)
                 console.log(res.data)
-                setModels(res.data)
+                setModels(res.data)*/
             } catch (err) {
                 setErr(err.responde.data)
             }
