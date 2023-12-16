@@ -43,12 +43,14 @@ function ColumnList ({ keys, nome, katId, kanbanCards }) {
           <div className="itens-container">
             {kanbanCards &&
               kanbanCards.map((card, index) => (
-                <Card
-                  keys={card.kac_id}
-                  card={card}
-                  index={index}
-                  katId={katId}
-                />
+                <div key={card.kac_id}>
+                  <Card
+                    keys={card.kac_id}
+                    card={card}
+                    index={index}
+                    katId={katId}
+                  />
+                </div>
               ))}
             {provided.placeholder}
           </div>
@@ -90,17 +92,19 @@ function RenderKanban({ kanbanTable, kanbanCards }) {
       <DragDropContext onDragEnd={handleDragEnd}>
         {kanbanTable &&
           kanbanTable.map((table) => (
-            <ColumnList
-              keys={table.kat_id}
-              nome={table.kat_title}
-              katId={table.kat_id}
-              kanbanCards={kanbanCards.filter((card) => card.kat_id === table.kat_id)}
-              type="card"
-            />
+            <div key={table.kat_id}>
+              <ColumnList
+                keys={table.kat_id}
+                nome={table.kat_title}
+                katId={table.kat_id}
+                kanbanCards={kanbanCards.filter((card) => card.kat_id === table.kat_id)}
+                type="card"
+              />
+            </div>
           ))}
       </DragDropContext>
     </div>
-  );
+  )
 }
 
 export default RenderKanban

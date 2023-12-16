@@ -97,7 +97,40 @@ export const desktop = (req, res) => {
         if (err) {
             return res.status(400).json(err)
         }
-        const r = JSON.stringify(data)
-            return res.status(200).json(data)  
+        return res.status(200).json(data)  
+    })
+}
+
+export const getProject = (req, res) => {
+    const { fra_id } = req.params
+
+    const q = "SELECT a.pro_id, a.des_id FROM pro_projects a JOIN fra_frames b JOIN des_desktop c WHERE a.pro_id = b.pro_id AND b.pro_id = ? AND a.pro_state = 'active' AND b.fra_state = 'active' AND c.des_state = 'active'"
+
+    const values = [
+        fra_id
+    ]
+
+    db.query(q, values, (err, data) => {
+        if (err) {
+            return res.status(500).json({ error: "Houve um erro ao obter o endereçamento do projeto." })
+        }
+        return res.status(200).json(data)
+    })
+}
+
+export const getDesktop = (req, res) => {
+    const { pro_id } = req.params
+
+    const q = "SELECT a.des_id FROM pro_projects a JOIN des_desktop b WHERE a.pro_state = 'active' AND b.des_state = 'active'"
+
+    const values = [
+        pro_id
+    ]
+
+    db.query(q, values, (err, data) => {
+        if (err) {
+            return res.status(500).json({ error: "Houve um erro ao obter o endereçamento da área de trabalho." })
+        }
+        return res.status(200).json(data)
     })
 }

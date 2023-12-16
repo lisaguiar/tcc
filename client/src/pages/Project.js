@@ -20,8 +20,6 @@ const Project = () => {
   const [project, setProject] = useState([])
   const [frames, setFrames] = useState([])
 
-  const [kanbanTable, setKanbanTable] = useState([])
-  const [kanbanCards, setKanbanCards] = useState([])
 
   const [err, setErr] = useState("")
 

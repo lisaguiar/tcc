@@ -19,8 +19,8 @@ function Modal (props) {
 
     const location = useLocation()
     const des_id = location.pathname.split("/")[2]
-    const pro_id = location.pathname.split("/")[4]
-    const fra_id = location.pathname.split("/")[6]
+    const pro_id = location.pathname.split("/")[2]
+    const fra_id = location.pathname.split("/")[2]
 
     const [inputFrame, setInputFrame] = useState({
         fra_title: "",
@@ -302,7 +302,7 @@ function Modal (props) {
         mode: "all"
     })
 
-    const { closeModal } = useContext(ModalContext)
+    const { closeModal, openModal } = useContext(ModalContext)
 
     useEffect(() => {
         const renderValue = () => {
@@ -355,7 +355,6 @@ function Modal (props) {
     const handleChange = (e) => {
         const {name, value} = e.target
         setValue(name, value)
-        console.log('', getValues())
     }
     /*const handleChange = (updatedFunction, fieldName, e) => {
         updatedFunction((prev) => ({...prev, [fieldName]: e.target.value}))
@@ -500,7 +499,8 @@ function Modal (props) {
             <div className="lista-topo">
                 <h3>{operation} {props.type}</h3>
                 <span className="mdi mdi-close close" onClick={() => {
-                    closeModal()}}><AiOutlineClose/></span>
+                    closeModal()
+                    console.log(openModal)}}><AiOutlineClose/></span>
             </div>
             
             <form className='lista-datoss' onSubmit={handleSubmit(varSubmit)}>

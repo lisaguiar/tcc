@@ -9,10 +9,10 @@ import { ModalProvider } from './contexts/modal'
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
     <AuthContextProvider>
-      <SocketProvider>
-        <ModalProvider>
-          <App />
-        </ModalProvider>
-      </SocketProvider> 
+        <SocketProvider>
+          <ModalProvider>
+            <App />
+          </ModalProvider>
+        </SocketProvider> 
     </AuthContextProvider>
 )

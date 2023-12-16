@@ -13,7 +13,7 @@ export const getFrames = (req, res) => {
 
     db.query(q, values, (err, data) => {
         if (err) {
-            return res.status(500).json(err)
+            return res.status(500).json({ error: "Houve um erro ao obter os quadros." })
         } 
         const { q } = req.query
 
@@ -33,7 +33,7 @@ export const getFrames = (req, res) => {
 }
 
 export const getFrame = (req, res) => {
-    const { pro_id, fra_id } = req.params
+    const { fra_id } = req.params
 
     const q = "SELECT * FROM fra_frames WHERE fra_id = ? AND fra_state = 'active'"
 
@@ -43,7 +43,7 @@ export const getFrame = (req, res) => {
 
     db.query(q, values, (err, data) => {
         if (err) {
-            return res.status(500).json(err)
+            return res.status(500).json({ error: "Houve um erro ao obter o quadro." })
         } 
         return res.status(200).json(data)
     })
@@ -68,7 +68,7 @@ export const postFrame = (req, res) => {
 
     db.query(q, [values], (err) => {
         if (err) {
-            return res.status(500).json({ error: "Houve um erro ao cadastrar o quadro!" })
+            return res.status(500).json({ error: "Houve um erro ao cadastrar o quadro." })
         }
 
         req.io.emit('frameCreated', { frameId: pro_id })
@@ -91,7 +91,7 @@ export const patchFrame = (req, res) => {
 
     db.query(q, values, (err) => {
         if (err) {
-            return res.status(500).json({ error: "Houve um erro ao atualizar o quadro!" })
+            return res.status(500).json({ error: "Houve um erro ao atualizar o quadro." })
         }
 
         req.io.emit('frameUpdated', { fraId: pro_id })
@@ -111,7 +111,7 @@ export const deleteFrame = (req, res) => {
 
     db.query(q, values, (err) => {
         if (err) {
-            return res.status(500).json({ error: "Houve um erro ao excluir o quadro!" })
+            return res.status(500).json({ error: "Houve um erro ao excluir o quadro." })
         }
 
         req.io.emit('frameDeleted', { fraId: pro_id })

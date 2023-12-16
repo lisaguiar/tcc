@@ -58,7 +58,7 @@ const router = createBrowserRouter ([
         element: <AuthenticatedRoute element={<Project/>} />
       },
       {
-        path: '/u/:uda_id/frame/:fra_id', 
+        path: '/u/:uda_id/project/:pro_id/frame/:fra_id', 
         element: <AuthenticatedRoute element={<Frame/>} />
       },
       {

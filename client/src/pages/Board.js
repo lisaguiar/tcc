@@ -1,6 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import '../styles/Workspace.css'
-
 import { AuthContext } from '../contexts/auth'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { RiSettingsLine, RiTrelloFill, RiUserLine } from 'react-icons/ri'
@@ -8,12 +6,10 @@ import SearchBar from '../components/SearchBar'
 import Modal from '../components/Modal'
 import { getDesktops } from '../api/desktop'
 import { getAllProjects } from '../api/project'
+import { ModalContext } from '../contexts/modal'
 
 const Board = () => {
-    const [openModal, setOpenModal] = useState(false)
-    const [inputType, setInputType] = useState("")
-    const [inputOperation, setInputOperation] = useState("")
-    const [inputItem, setInputItem] = useState("")
+    const { openModal, inputType, inputOperation, inputItem, setModalState } = useContext(ModalContext)
 
     const { currentUser } = useContext(AuthContext)
 
@@ -26,10 +22,6 @@ const Board = () => {
     const [desktop, setDesktop] = useState()
     const [projects, setProjects] = useState()
     const [err, setErr] = useState("")
-
-    const handleOpenModal = (value) => {
-        setOpenModal(value)
-    }
 
     useEffect(() => {
         const fetchDesktop = async () => {
@@ -64,14 +56,12 @@ const Board = () => {
             <div className="flex flex-col absolute top-0 left-searchbar w-board min-w-fit max-w-full min-h-full max-h-fit bg-white  border rounded-tl-lg border-dark-grey">
                 <div className="px-16 w-full h-full">
                 
-                {openModal && <Modal type={inputType} operation={inputOperation} modal={openModal} input={inputItem} openChange={handleOpenModal}/>}
+                {openModal && <Modal type={inputType} operation={inputOperation} input={inputItem}/>}
 
                 <div className="flex flex-shrink-0 flex-wrap w-4/6 min-h-fit my-12 items-start">
                     <h3 className="font-medium w-full">Suas áreas de trabalho</h3>
                     <p onClick={() => {
-                        setInputOperation("create")
-                        setInputType("área")
-                        setOpenModal(true)
+                        setModalState({type:"área", operation:"create"})
                     }}>Adicionar desktop</p>
                     {desktop ? (
                     <div className='flex flex-shrink-0 flex-wrap w-full min-h-full'>
@@ -103,17 +93,14 @@ const Board = () => {
                                 .filter(project => project.des_id === parseInt(desktop.des_id))  
                                 .map((project) => {
                                     return (
-                                    <div className="flex justify-center items-center w-[22%] h-28 bg-light-grey rounded-sm mb-4  cursor-pointer hover:bg-dark-grey transition-all duration-300 ease" onClick={() => navigate(`/u/${desktop.uda_id}/project/${project.pro_id}`)}>
+                                    <div className="flex justify-center items-center w-[22%] h-28 bg-light-grey rounded-sm mb-4  cursor-pointer hover:bg-dark-grey transition-all duration-300 ease" key={project.pro_id} onClick={() => navigate(`/u/${desktop.uda_id}/project/${project.pro_id}`)}>
                                         <p>{project.pro_title}</p>
                                     </div>
                                     )
                                 })
                                 }
                                 <div className="flex justify-center items-center w-[22%] h-28 bg-light-grey rounded-sm mb-4 cursor-pointer hover:bg-dark-grey transition-all duration-300 ease" onClick={() => {
-                                    setInputOperation("create")
-                                    setInputType("projeto")
-                                    setInputItem(desktop)
-                                    setOpenModal(true)
+                                    setModalState({type:"projeto", operation:"create", item:desktop})
                                 }}>
                                 <p className="p-4 text-center font-light">Criar novo projeto</p>
                                 </div>
@@ -126,9 +113,7 @@ const Board = () => {
                     ) : (
                     <div>
                         <p className="mt-2 w-full">Você ainda não é membro de nenhuma área de trabalho. <span className="text-light-purple cursor-pointer" onClick={() => {
-                            setInputOperation("create")
-                            setInputType("área")
-                            setOpenModal(true)
+                            setModalState({type:"área", operation:"create"})
                         }}> Criar área de trabalho.</span>
                         </p>
                     </div>

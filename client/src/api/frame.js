@@ -11,7 +11,7 @@ export const getFrames = async (pro_id) => {
 
 export const getFrame = async (fra_id) => {
     try {
-        const res = await axios.get(`/api/frames/${fra_id}`)
+        const res = await axios.get(`/api/frames/one/${fra_id}`)
         return res.data
     } catch (error) {
         return error.response.data.error
