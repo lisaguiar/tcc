@@ -11,8 +11,6 @@ import { ModalContext } from '../contexts/modal'
 const Board = () => {
     const { openModal, inputType, inputOperation, inputItem, setModalState } = useContext(ModalContext)
 
-    const { currentUser } = useContext(AuthContext)
-
     const location = useLocation()
 
     const use_id = location.pathname.split("/")[2]
@@ -24,28 +22,20 @@ const Board = () => {
     const [err, setErr] = useState("")
 
     useEffect(() => {
-        const fetchDesktop = async () => {
+        const fetchData = async () => {
             try {
-                const res = await getDesktops(use_id)
-                setDesktop(res)
+                const resDesktop = await getDesktops(use_id)
+                setDesktop(resDesktop)
+
+                const resProjects = await getAllProjects()
+                setProjects(resProjects) 
             } catch (error) {
                 setErr(error.response.data.error)
             }
         }
-    
-        const fetchProject = async () => {
-            try {
-                const res = await getAllProjects()
-                setProjects(res)
-            } catch (error) {
-                setErr(error.response.data.error)
-            }
-        }
-
-        fetchDesktop()
-        fetchProject()
-
-    }, [use_id])
+        fetchData()
+        console.log(err)
+    }, [use_id, err])
 
     return (
         <div>
@@ -80,11 +70,11 @@ const Board = () => {
                                 </div>
                                 <div className="flex justify-center space-x-1 items-center w-[30%] min-w-fit h-10 bg-light-grey rounded-sm cursor-pointer  hover:bg-dark-grey transition-all duration-300 ease">
                                     <RiUserLine className="text-dark-purple h-5 w-5"/>
-                                    <p className="text-sm">Membros</p>
+                                    <p className="text-sm" onClick={() => navigate(`/u/${desktop.uda_id}/desktop/${desktop.des_id}/members`)}>Membros</p>
                                 </div>
                                 <div className="flex justify-center space-x-1 items-center w-[35%] min-w-fit h-10 bg-light-grey rounded-sm cursor-pointer hover:bg-dark-grey transition-all duration-300 ease">
                                     <RiSettingsLine className="text-dark-purple h-5 w-5"/>
-                                    <p className="text-sm">Configurações</p>
+                                    <p className="text-sm" onClick={() => setModalState({ type: "área", operation: "update", item: desktop})}>Configurações</p>
                                 </div>
                                 </div>
                             </div>

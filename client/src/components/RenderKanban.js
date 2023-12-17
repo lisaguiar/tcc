@@ -12,12 +12,12 @@ function Card ({ keys, index, card }) {
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
                 ref={provided.innerRef}
-                className="item-container"
+                className="bg-white p-4 mb-3 rounded-xl shadow-md cursor-pointer"
                 onClick={() => {
                 setModalState("cartão", "update", card)
                 }}
             >
-                <p>{card.kac_title}</p>
+                <p className="text-sm">{card.kac_title}</p>
             </div>
             )}
         </Draggable>
@@ -34,12 +34,9 @@ function ColumnList ({ keys, nome, katId, kanbanCards }) {
           ref={provided.innerRef}
           className="kanban-container"
         >
-          <div className="column-container justify-between p-2">
-            <h4>{nome}</h4>
-            <div className="flex flex=wrap">
-              {/* ... */}
-            </div>
-          </div>
+        <div className="column-container bg-gray-100 p-1 mb-2 rounded">
+          <h3 className="text-sm font-semibold">{nome}</h3>
+        </div>
           <div className="itens-container">
             {kanbanCards &&
               kanbanCards.map((card, index) => (
@@ -88,21 +85,33 @@ function RenderKanban({ kanbanTable, kanbanCards }) {
   }
 
   return (
-    <div className="kanban">
-      <DragDropContext onDragEnd={handleDragEnd}>
-        {kanbanTable &&
-          kanbanTable.map((table) => (
-            <div key={table.kat_id}>
-              <ColumnList
-                keys={table.kat_id}
-                nome={table.kat_title}
-                katId={table.kat_id}
-                kanbanCards={kanbanCards.filter((card) => card.kat_id === table.kat_id)}
-                type="card"
-              />
-            </div>
-          ))}
-      </DragDropContext>
+    <div className="flex flex-col justify-center mt-1">
+      <div className="w-full mx-auto">
+        <div className="w-full flex justify-between items-center mb-4 bg-indigo-400 text-white px-4 py-2 rounded">
+          <div className="flex items-center space-x-4">
+            <h2 className="text-3xl font-bold">Project Name</h2>
+            
+          </div>
+          <button className="bg-blue-950 text-white px-4 py-2 rounded">Compartilhar</button>
+        </div>
+
+        <div className="kanban">
+          <DragDropContext onDragEnd={handleDragEnd}>
+            {kanbanTable &&
+              kanbanTable.map((table) => (
+                <div key={table.kat_id}>
+                  <ColumnList
+                    keys={table.kat_id}
+                    nome={table.kat_title}
+                    katId={table.kat_id}
+                    kanbanCards={kanbanCards.filter((card) => card.kat_id === table.kat_id)}
+                    type="card"
+                  />
+                </div>
+              ))}
+          </DragDropContext>
+        </div>
+      </div>
     </div>
   )
 }

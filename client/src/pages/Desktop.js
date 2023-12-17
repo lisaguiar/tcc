@@ -134,7 +134,7 @@ const Desktop = () => {
 
     return (
       <>
-        <div className='flex flex-wrap'>
+        <div className='flex flex-wrap w-full'>
           {renderProject()}
         </div>
       </>

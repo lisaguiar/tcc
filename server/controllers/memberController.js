@@ -3,22 +3,25 @@ import { db } from "../config/config.js"
 const state = 'active'
 
 export const postMember = (req, res) => {
-    const q = "INSERT INTO uda_userDesktop (uda_state, uda_createdAt, use_id, des_id, per_id) VALUES (?)"
+    const { email, createdAt, per_id } = req.body
+    const { des_id } = req.params 
+
+    const q = "INSERT INTO uda_userDesktop (uda_state, uda_createdAt, use_id, des_id, per_id) VALUES (?, ?, (SELECT use_id FROM use_users WHERE use_email = ?), ?, ?)"
 
     const values = [
         state,
-        req.body.des_createdAt,
-        req.params.use_id,
-        req.params.des_id,
-        req.body.per_id
+        createdAt,
+        email,
+        des_id,
+        per_id
     ]
 
     db.query(q, values, (err) => {
         if (err) {
-            return res.status(500).json({ error: "Error adding member" })
+            return res.status(500).json({ error: "Houve um erro ao adicionar o membro." })
         }
-        req.io.emit("memberPosted", { desktopId: req.params.des_id} )
-        return res.status(201).json({ message: "Member added successfully" })
+        req.io.emit("memberPosted", { desktopId: des_id} )
+        return res.status(201).json({ message: "Membro adicionado com sucesso." })
     })
 }
 

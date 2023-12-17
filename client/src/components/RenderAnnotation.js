@@ -1,4 +1,4 @@
-function RenderAnnotation({annotation}) {
+function RenderAnnotation({ annotation }) {
     return (
         <>
         </>

@@ -76,7 +76,7 @@ const Project = () => {
           </div>
           <div className="prof_item" onClick={() => {
             setDropIsOpen(!DropIsOpen)
-            setModalState({type:"projeto", operation:"create"})
+            setModalState({ type:"projeto", operation:"create" })
           }}>
             <RiLayoutBottom2Line/>
             <p>Criar projeto</p>

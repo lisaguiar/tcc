@@ -1,6 +1,7 @@
-function RenderChecklist({checklist}) {
+function RenderChecklist({ checklist }) {
     return (
         <>
+            <p>{checklist.che_title}</p>
         </>
     )
 }

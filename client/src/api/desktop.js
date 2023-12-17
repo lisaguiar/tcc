@@ -24,11 +24,12 @@ export const getDesktop = async (des_id) => {
 }
 
 export const postDesktop = async (use_id, data) => {
+    console.log("use: " + use_id)
     try {
         const res = await axios.post(`/api/desktops/${use_id}`, data)
         return res.data
     } catch (error) {
-        console.log("erro")
+        console.log(error.response.data.error)
     }
 }
 

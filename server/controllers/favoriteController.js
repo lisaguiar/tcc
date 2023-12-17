@@ -41,7 +41,7 @@ export const addFavorite = (req, res) => {
 export const deleteFavorite = (req, res) => {
     const { uda_id, fav_id } = req.params
 
-    const q = "UPDATE fav_favorites SET fra_state = 'disabled' WHERE fav_id = ?"
+    const q = "DELETE FROM fav_favorites WHERE fav_id = ?"
     
     const values = [
         fav_id
@@ -53,7 +53,7 @@ export const deleteFavorite = (req, res) => {
         }
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({ error: "Quadro favoritado não encontrado" })
+            return res.status(404).json({ error: "Quadro favoritado não encontrado." })
         }
         req.io.emit("favoriteDeleted", { userId: uda_id })
         return res.status(200).json({ message: "Quadro desfavoritado com sucesso." })

@@ -9,6 +9,8 @@ import RenderKanban from '../components/RenderKanban'
 import RenderChecklist from '../components/RenderChecklist'
 import RenderAnnotation from '../components/RenderAnnotation'
 import { getKanbanCard, getKanbanTable } from '../api/kanban'
+import { getChecklist } from '../api/checklist'
+import { getAnnotation } from '../api/annotation'
 
 const Frame = () => {
     const { openModal, inputType, inputOperation, inputItem, setModalState } = useContext(ModalContext)
@@ -26,7 +28,7 @@ const Frame = () => {
     const uda_id = location.pathname.split("/")[2]
     const pro_id = location.pathname.split("/")[4]
     const fra_id = location.pathname.split("/")[6]
-  
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -43,9 +45,11 @@ const Frame = () => {
                         const resKanbanCard = await getKanbanCard(fra_id)
                         setKanbanCards(resKanbanCard)
                     } else if (resFrame[0].mod_id === 2) {
-
+                        const resChecklist = await getChecklist(fra_id)
+                        setCheklist(resChecklist)
                     } else if (resFrame[0].mod_id === 3) {
-
+                        const resAnnotation = await getAnnotation(fra_id)
+                        setAnnotation(resAnnotation)
                     }
                 }
             } catch (error) {
@@ -97,7 +101,7 @@ const Frame = () => {
                 <>
                     {frames.map((frame) => {
                     return (
-                        <div key={frame.fra_id} className='border flex w-full flex-wrap'>
+                        <div key={frame.fra_id} className='border flex min-w-full flex-wrap'>
                         <p className='w-full'>{frame.fra_title}</p> //map dos frames pra poder trocar de quadro
                         </div>
                     )
@@ -122,28 +126,24 @@ const Frame = () => {
             case 1:
                 return RenderKanban({ kanbanTable: kanbanTable, kanbanCards: kanbanCards })
             case 2:
-                RenderChecklist(checklist)
-            break
+                return RenderChecklist(checklist)
             case 3:
-                RenderAnnotation(annotation)
-            break
+                return RenderAnnotation(annotation)
         }
     }
 
     return (
         <div>
-            <section className="home-section">
+            <section className="relative bg-white h-full">
                 <SearchBar/>
-                <div className="topo">
-                    <div className="projeto">
+                <div className="flex flex-col absolute top-0 left-searchbar w-board min-w-fit max-w-full min-h-full max-h-fit bg-white  border rounded-tl-lg border-dark-grey">
+                    <div className="px-16 w-full h-full">
                         {Frame()}
-                    
                     </div>
-                    <div className="quadro-map">
+                    <div className="flex flex-shrink-0 flex-wrap w-4/6 min-h-fit my-12 items-start">
                         {Frames()}
                         {frame.length > 0 && RenderFrame()}
                         {openModal && <Modal type={inputType} operation={inputOperation} input={inputItem}/>}
-
                     </div>
                 </div>
             </section>

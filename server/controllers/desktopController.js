@@ -51,16 +51,16 @@ export const getDesktop = (req, res) => {
 }
 
 export const postDesktop = (req, res) => {
-    const { title, description, createdAt } = req.body
+    const { des_title, des_description, des_createdAt } = req.body
     const { use_id } = req.params
     
     const q = "INSERT INTO des_desktop (des_title, des_description, des_state, des_createdAt) VALUES (?)"
 
     const values = [
-        title,
-        description,
+        des_title,
+        des_description,
         state,
-        createdAt
+        des_createdAt
     ]
 
     db.query(q, [values], (err) => {
@@ -90,7 +90,7 @@ export const postDesktop = (req, res) => {
 
                 const values = [
                     state,
-                    createdAt,
+                    des_createdAt,
                     use_id,
                     des_id,
                     '1'
@@ -117,14 +117,14 @@ export const postDesktop = (req, res) => {
 }
 
 export const patchDesktop = (req, res) => {
-    const { title, description } = req.body
+    const { des_title, des_description } = req.body
     const { des_id, uda_id } = req.params
 
     const q = "UPDATE des_desktop SET des_title = ?, des_description = ? WHERE des_id = ?"
 
     const values = [
-        title, 
-        description,
+        des_title, 
+        des_description,
         des_id
     ]
   
